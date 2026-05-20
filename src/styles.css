@@ -32,9 +32,18 @@ body {
   line-height: 1.6;
 }
 
+button,
 a {
   color: inherit;
+  font: inherit;
+}
+
+a {
   text-decoration: none;
+}
+
+button {
+  cursor: pointer;
 }
 
 .site-header {
@@ -88,14 +97,13 @@ a {
 .hero {
   position: relative;
   display: grid;
-  align-items: center;
   min-height: 86vh;
   overflow: hidden;
   padding: 7rem 6vw 6rem;
   background: #101820;
 }
 
-#vehicle-data-canvas,
+.vehicle-data-canvas,
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -103,7 +111,7 @@ a {
   height: 100%;
 }
 
-#vehicle-data-canvas {
+.vehicle-data-canvas {
   opacity: 0.95;
 }
 
@@ -116,8 +124,51 @@ a {
 .hero-content {
   position: relative;
   z-index: 2;
+  align-self: center;
   width: min(760px, 100%);
   color: #fff;
+}
+
+.hero-panel {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  justify-self: end;
+  width: min(360px, 100%);
+  margin-top: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: rgba(16, 24, 32, 0.58);
+  color: #eaf1f4;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  color: #b9c9d0;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem 1rem;
+  padding: 1rem;
+  font-size: 0.88rem;
+}
+
+.signal-grid span {
+  color: #8fa4ae;
+}
+
+.signal-grid strong {
+  color: #ffffff;
 }
 
 .eyebrow,
@@ -277,6 +328,40 @@ h3 {
   margin-bottom: 2rem;
 }
 
+.work-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  max-width: none;
+  gap: 1.5rem;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.filter-button {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.68rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.filter-button:hover,
+.filter-button:focus-visible,
+.filter-button.is-active {
+  border-color: rgba(15, 118, 110, 0.42);
+  background: #e3f4f1;
+  color: var(--teal-dark);
+}
+
 .project-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -409,13 +494,26 @@ h3 {
     font-size: 1.75rem;
   }
 
+  .hero-panel {
+    justify-self: start;
+  }
+
   .intro-grid,
   .contact-section,
   .focus-band,
   .metrics,
   .project-grid,
-  .stack-grid {
+  .stack-grid,
+  .work-heading {
     grid-template-columns: 1fr;
+  }
+
+  .work-heading {
+    display: grid;
+  }
+
+  .filter-controls {
+    justify-content: flex-start;
   }
 
   .stack-grid {
@@ -458,7 +556,8 @@ h3 {
   }
 
   .hero-actions,
-  .button {
+  .button,
+  .hero-panel {
     width: 100%;
   }
 
