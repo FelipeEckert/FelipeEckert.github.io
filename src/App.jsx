@@ -1,67 +1,117 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Activity,
+  ArrowRight,
+  Briefcase,
+  Code2,
+  Cpu,
+  Database,
+  Download,
+  ExternalLink,
+  Gauge,
+  GraduationCap,
+  Layers,
+  Mail,
+  MapPin,
+  Wrench,
+} from "lucide-react";
+
+const profile = {
+  name: "Felipe Arthur Eckert",
+  location: "Sao Paulo, Brazil",
+  email: "felipeeckert10@hotmail.com",
+  linkedin: "https://br.linkedin.com/in/felipe-arthur-eckert-b745461a9",
+  github: "",
+  resume: "",
+};
 
 const navItems = [
   { label: "About", href: "#about" },
-  { label: "Work", href: "#work" },
+  { label: "Projects", href: "#projects" },
+  { label: "Experience", href: "#experience" },
   { label: "Stack", href: "#stack" },
   { label: "Contact", href: "#contact" },
 ];
 
-const metrics = [
+const heroStats = [
+  { value: "80%", label: "faster road-load analysis" },
+  { value: "R&D", label: "energy efficiency and data analytics" },
+  { value: "C1", label: "English, plus PT native and ES B1" },
+];
+
+const proofPoints = [
   {
-    value: "80%",
-    label: "analysis time reduction on road-load workflows",
+    icon: Gauge,
+    label: "Road-load automation",
+    detail: "Python tooling for coastdown coefficient calculations.",
   },
   {
-    value: "R&D",
-    label: "Energy Efficiency & Data Analytics at Hyundai Motor Brasil",
+    icon: Database,
+    label: "Vehicle data pipelines",
+    detail: "Chassis dynamometer and road-test datasets with Pandas and NumPy.",
   },
   {
-    value: "C1",
-    label: "English proficiency, plus native Portuguese and B1 Spanish",
+    icon: Cpu,
+    label: "Automotive systems",
+    detail: "CAN bus, CANalyzer/CANoe, INCA Bosch ETAS and ECU calibration context.",
   },
 ];
 
 const projects = [
   {
-    type: "Python tooling",
+    title: "Coastdown / road-load analysis tool",
     category: "automation",
-    title: "Coastdown & road-load analysis tool",
+    type: "Python tooling",
     description:
-      "Automated calculation workflows for road-load coefficients, reducing repetitive analysis effort and supporting cleaner technical and executive reporting.",
-    tags: ["Python", "Pandas", "NumPy", "Matplotlib"],
+      "Automates road-load coefficient calculations and report preparation for coastdown analysis workflows.",
+    impact: "Reduced analysis time by about 80%.",
+    stack: ["Python", "Pandas", "NumPy", "Matplotlib"],
+    status: "Case Study",
+    link: "",
   },
   {
-    type: "Vehicle analytics",
+    title: "Vehicle data dashboards",
     category: "analytics",
-    title: "Dynamometer and road-test data analysis",
+    type: "Data visualization",
     description:
-      "Processing large datasets from chassis dynamometer and road tests to evaluate energy, consumption, and efficiency behavior across vehicle conditions.",
-    tags: ["Pandas", "Plotly", "Reports"],
+      "Dashboard concepts for exploring dynamometer and road-test signals across energy, consumption and efficiency views.",
+    impact: "Built for faster technical review and clearer reporting.",
+    stack: ["Pandas", "Plotly", "Streamlit"],
+    status: "Coming Soon",
+    link: "",
   },
   {
-    type: "Automotive systems",
+    title: "CAN bus diagnostic workflows",
     category: "automotive",
-    title: "CAN bus diagnostics and calibration workflows",
+    type: "Automotive data",
     description:
-      "Experience with CANalyzer, CANoe, INCA Bosch ETAS, ECU calibration, and CAN bus analysis for embedded and vehicle development contexts.",
-    tags: ["CAN bus", "INCA", "CANoe"],
+      "Diagnostic and reverse-engineering workflow experience around CAN signals, ECU calibration context and vehicle development tools.",
+    impact: "Connects embedded context with analysis-ready datasets.",
+    stack: ["CAN bus", "CANoe", "CANalyzer", "INCA"],
+    status: "Case Study",
+    link: "",
   },
   {
+    title: "Telemetry and data logger systems",
+    category: "automotive",
     type: "BAJA SAE",
-    category: "automotive",
-    title: "Telemetry, data logger, and powertrain development",
     description:
-      "Former Poli-USP BAJA SAE Powertrain Director, working on telemetry, data logging, vehicle setup, 4x4 gearbox development, and CVT calibration.",
-    tags: ["Telemetry", "Data logger", "Powertrain"],
+      "Powertrain development work covering telemetry, data logger usage, vehicle setup, 4x4 gearbox and CVT calibration.",
+    impact: "Hands-on system ownership in a competitive engineering team.",
+    stack: ["Telemetry", "Data logger", "Powertrain"],
+    status: "Case Study",
+    link: "",
   },
   {
-    type: "Data apps",
+    title: "Streamlit and Plotly analysis apps",
     category: "analytics",
-    title: "Streamlit and visualization portfolio",
+    type: "Portfolio track",
     description:
-      "Portfolio track for clean dashboards and internal apps that turn technical datasets into interactive analysis flows.",
-    tags: ["Streamlit", "Plotly", "Power BI"],
+      "Interactive data app track for turning technical analysis scripts into recruiter-friendly, reusable interfaces.",
+    impact: "Focused on clean UX for engineering data decisions.",
+    stack: ["Streamlit", "Plotly", "Power BI"],
+    status: "Building",
+    link: "",
   },
 ];
 
@@ -74,35 +124,75 @@ const filters = [
 
 const stackGroups = [
   {
+    icon: Database,
     title: "Data & Analytics",
     items: ["Python", "Pandas", "NumPy", "Matplotlib", "Plotly", "Scikit-learn"],
   },
   {
+    icon: Activity,
     title: "Apps & Visualization",
     items: ["Streamlit", "Plotly Dash", "Power BI"],
   },
   {
+    icon: Cpu,
     title: "Automotive & Embedded",
-    items: [
-      "CANalyzer",
-      "CANoe",
-      "INCA Bosch ETAS",
-      "ECU calibration",
-      "CAN bus",
-      "MATLAB/Simulink",
-      "C++",
-    ],
+    items: ["CANalyzer", "CANoe", "INCA", "ECU calibration", "CAN bus", "MATLAB/Simulink", "C++"],
   },
   {
+    icon: Wrench,
     title: "Tools",
-    items: ["Git", "GitHub", "Technical reporting", "Internal documentation"],
+    items: ["Git", "GitHub", "Automation workflows", "Technical reporting"],
   },
 ];
 
-const focusItems = [
-  "Deepening SQL, Power BI, machine learning, and AI-assisted analytics.",
-  "Turning automotive analysis workflows into reusable Python and Streamlit tools.",
-  "Growing a portfolio centered on practical analytics, automation, and vehicle data.",
+const timelineItems = [
+  {
+    icon: Briefcase,
+    label: "Current",
+    title: "Junior R&D Analyst",
+    place: "Hyundai Motor Brasil",
+    detail:
+      "Energy Efficiency & Data Analytics work focused on vehicle test data, automation workflows and executive-ready technical reporting.",
+  },
+  {
+    icon: GraduationCap,
+    label: "Engineering foundation",
+    title: "Electrical Engineering",
+    place: "Poli-USP",
+    detail:
+      "Automation and Control emphasis with automotive engineering specialization, connecting control systems, data and vehicle development.",
+  },
+  {
+    icon: Layers,
+    label: "Hands-on systems",
+    title: "Powertrain Director",
+    place: "Poli-USP BAJA SAE",
+    detail:
+      "Telemetry, data logger, vehicle setup, 4x4 gearbox development and CVT calibration in a practical motorsport engineering environment.",
+  },
+];
+
+const focusItems = ["SQL", "Power BI", "Machine Learning", "AI-assisted analytics", "Remote-first data roles"];
+
+const contactLinks = [
+  {
+    label: "Email",
+    detail: profile.email,
+    href: `mailto:${profile.email}`,
+    icon: Mail,
+  },
+  {
+    label: "LinkedIn",
+    detail: "Felipe Arthur Eckert",
+    href: profile.linkedin,
+    icon: Briefcase,
+  },
+  {
+    label: "GitHub",
+    detail: "Profile link pending",
+    href: profile.github,
+    icon: Code2,
+  },
 ];
 
 function VehicleDataCanvas() {
@@ -111,14 +201,15 @@ function VehicleDataCanvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = 0;
     let height = 0;
     let animationFrame = 0;
 
     const traces = [
-      { color: "rgba(125, 211, 199, 0.82)", amplitude: 42, speed: 0.012, offset: 0 },
-      { color: "rgba(94, 146, 217, 0.72)", amplitude: 30, speed: 0.017, offset: 80 },
-      { color: "rgba(246, 185, 108, 0.62)", amplitude: 24, speed: 0.021, offset: 160 },
+      { color: "rgba(58, 214, 176, 0.82)", amplitude: 34, speed: 0.012, offset: 0 },
+      { color: "rgba(245, 178, 91, 0.68)", amplitude: 25, speed: 0.017, offset: 84 },
+      { color: "rgba(196, 92, 104, 0.55)", amplitude: 20, speed: 0.021, offset: 156 },
     ];
 
     function resizeCanvas() {
@@ -132,7 +223,7 @@ function VehicleDataCanvas() {
     }
 
     function drawGrid() {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.055)";
       ctx.lineWidth = 1;
 
       for (let x = 0; x < width; x += 72) {
@@ -151,13 +242,13 @@ function VehicleDataCanvas() {
     }
 
     function drawTrace(trace, time) {
-      const baseline = height * 0.56 + trace.offset * 0.38;
+      const baseline = height * 0.45 + trace.offset * 0.42;
       ctx.beginPath();
 
       for (let x = -20; x <= width + 20; x += 8) {
-        const waveA = Math.sin(x * 0.012 + time * trace.speed);
-        const waveB = Math.cos(x * 0.024 + time * trace.speed * 0.64);
-        const y = baseline + waveA * trace.amplitude + waveB * trace.amplitude * 0.32;
+        const waveA = Math.sin(x * 0.011 + time * trace.speed);
+        const waveB = Math.cos(x * 0.025 + time * trace.speed * 0.7);
+        const y = baseline + waveA * trace.amplitude + waveB * trace.amplitude * 0.3;
 
         if (x === -20) {
           ctx.moveTo(x, y);
@@ -171,56 +262,36 @@ function VehicleDataCanvas() {
       ctx.stroke();
     }
 
-    function drawDataPoints(time) {
-      for (let index = 0; index < 22; index += 1) {
-        const progress = index / 22;
-        const x = width * (0.42 + progress * 0.55);
-        const y = height * 0.28 + Math.sin(time * 0.018 + index * 0.9) * 22 + (index % 5) * 36;
-        const radius = 2 + (index % 3);
-
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = index % 4 === 0 ? "rgba(246, 185, 108, 0.9)" : "rgba(125, 211, 199, 0.75)";
-        ctx.fill();
-      }
+    function drawScan(time) {
+      const x = ((time * 0.04) % (width + 160)) - 80;
+      const gradient = ctx.createLinearGradient(x - 80, 0, x + 80, 0);
+      gradient.addColorStop(0, "rgba(58, 214, 176, 0)");
+      gradient.addColorStop(0.5, "rgba(58, 214, 176, 0.18)");
+      gradient.addColorStop(1, "rgba(58, 214, 176, 0)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x - 80, 0, 160, height);
     }
 
-    function drawVehicleSilhouette() {
-      const carWidth = Math.min(width * 0.34, 430);
-      const carHeight = carWidth * 0.28;
-      const x = width - carWidth - width * 0.08;
-      const y = height * 0.67;
-
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + carWidth * 0.18, y - carHeight * 0.58);
-      ctx.lineTo(x + carWidth * 0.42, y - carHeight * 0.82);
-      ctx.lineTo(x + carWidth * 0.64, y - carHeight * 0.58);
-      ctx.lineTo(x + carWidth * 0.86, y - carHeight * 0.42);
-      ctx.lineTo(x + carWidth, y);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.arc(x + carWidth * 0.24, y, carHeight * 0.24, 0, Math.PI * 2);
-      ctx.arc(x + carWidth * 0.78, y, carHeight * 0.24, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    function animate(time) {
+    function draw(time) {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#101820";
+      ctx.fillStyle = "#090b10";
       ctx.fillRect(0, 0, width, height);
       drawGrid();
       traces.forEach((trace) => drawTrace(trace, time));
-      drawDataPoints(time);
-      drawVehicleSilhouette();
-      animationFrame = requestAnimationFrame(animate);
+      drawScan(time);
+
+      if (!prefersReducedMotion) {
+        animationFrame = requestAnimationFrame(draw);
+      }
     }
 
     resizeCanvas();
-    animate(0);
+    draw(0);
+
+    if (!prefersReducedMotion) {
+      animationFrame = requestAnimationFrame(draw);
+    }
+
     window.addEventListener("resize", resizeCanvas);
 
     return () => {
@@ -232,11 +303,21 @@ function VehicleDataCanvas() {
   return <canvas ref={canvasRef} className="vehicle-data-canvas" aria-hidden="true" />;
 }
 
+function SectionHeading({ kicker, title, copy }) {
+  return (
+    <div className="section-heading">
+      <p className="section-kicker">{kicker}</p>
+      <h2>{title}</h2>
+      {copy ? <p>{copy}</p> : null}
+    </div>
+  );
+}
+
 function Header() {
   return (
     <header className="site-header">
       <a className="brand" href="#top" aria-label="Felipe Arthur Eckert home">
-        FAE
+        <span>FAE</span>
       </a>
       <nav className="nav-links" aria-label="Primary navigation">
         {navItems.map((item) => (
@@ -249,90 +330,125 @@ function Header() {
   );
 }
 
+function HeroVisual() {
+  return (
+    <aside className="hero-visual" aria-label="Vehicle analytics dashboard mockup">
+      <div className="visual-topbar">
+        <span>coastdown_analysis.py</span>
+        <span>running</span>
+      </div>
+      <div className="code-block" aria-hidden="true">
+        <span>df = load_vehicle_test_data()</span>
+        <span>coefficients = fit_road_load(df)</span>
+        <span>report.export("executive_summary")</span>
+      </div>
+      <div className="chart-window" aria-hidden="true">
+        <div className="chart-line chart-line-a" />
+        <div className="chart-line chart-line-b" />
+        <div className="chart-line chart-line-c" />
+      </div>
+      <div className="visual-metrics">
+        {heroStats.map((stat) => (
+          <div className="visual-metric" key={stat.value}>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <VehicleDataCanvas />
       <div className="hero-overlay" />
-      <div className="hero-content">
-        <p className="eyebrow">Sao Paulo, Brazil</p>
-        <h1 id="hero-title">Felipe Arthur Eckert</h1>
-        <p className="hero-headline">
-          Data Analyst & Automation Engineer turning complex vehicle data into Python-powered tools.
-        </p>
-        <p className="hero-copy">
-          Electrical Engineering background from Poli-USP, automotive specialization, and hands-on R&D
-          experience building data workflows for road-load, dynamometer, CAN bus, and vehicle efficiency
-          analysis.
-        </p>
-        <div className="hero-actions" aria-label="Contact and profile links">
-          <a className="button button-primary" href="#contact">
-            Contact
-          </a>
-          <a className="button button-secondary" href="#work">
-            Featured Work
-          </a>
+      <div className="hero-layout">
+        <div className="hero-content">
+          <p className="eyebrow">
+            <MapPin size={15} aria-hidden="true" />
+            {profile.location}
+          </p>
+          <h1 id="hero-title">Turning complex vehicle data into Python-powered tools.</h1>
+          <p className="hero-headline">
+            Data Analyst & Automation Engineer bridging automotive R&D, data analytics and automation.
+          </p>
+          <p className="hero-copy">
+            I combine automotive engineering context, real vehicle test data and practical Python tooling to
+            make technical analysis faster, clearer and easier to repeat.
+          </p>
+          <div className="hero-actions" aria-label="Primary actions">
+            <a className="button button-primary" href="#projects">
+              View Projects
+              <ArrowRight size={18} aria-hidden="true" />
+            </a>
+            <a className="button button-secondary" href="#contact">
+              Contact Me
+              <Mail size={18} aria-hidden="true" />
+            </a>
+            {profile.resume ? (
+              <a className="button button-ghost" href={profile.resume}>
+                Download Resume
+                <Download size={18} aria-hidden="true" />
+              </a>
+            ) : null}
+          </div>
         </div>
+        <HeroVisual />
       </div>
-      <aside className="hero-panel" aria-label="Portfolio signal summary">
-        <div className="panel-header">
-          <span>vehicle-data.workflow</span>
-          <span>active</span>
-        </div>
-        <div className="signal-grid">
-          <span>road-load</span>
-          <strong>Automated</strong>
-          <span>dynamometer</span>
-          <strong>Large datasets</strong>
-          <span>reporting</span>
-          <strong>Executive-ready</strong>
-        </div>
-      </aside>
+    </section>
+  );
+}
+
+function ProofStrip() {
+  return (
+    <section className="proof-strip" aria-label="Professional highlights">
+      {proofPoints.map((point) => {
+        const Icon = point.icon;
+        return (
+          <article className="proof-item" key={point.label}>
+            <Icon size={22} aria-hidden="true" />
+            <div>
+              <h3>{point.label}</h3>
+              <p>{point.detail}</p>
+            </div>
+          </article>
+        );
+      })}
     </section>
   );
 }
 
 function About() {
   return (
-    <section className="section intro-grid" id="about" aria-labelledby="about-title">
-      <div>
+    <section className="section about-section" id="about" aria-labelledby="about-title">
+      <div className="section-heading">
         <p className="section-kicker">About</p>
-        <h2 id="about-title">Automotive domain knowledge meets practical data automation.</h2>
+        <h2 id="about-title">Automotive engineering became the place where data work felt obvious.</h2>
       </div>
-      <div className="section-copy">
+      <div className="about-copy">
         <p>
-          I work at the intersection of automotive engineering, analytics, and internal tooling. As a Junior
-          R&D Analyst in Energy Efficiency & Data Analytics at Hyundai Motor Brasil, I build workflows that help
-          translate raw vehicle measurements into faster engineering decisions.
+          My background is Electrical Engineering at Poli-USP, with an emphasis on Automation and Control and
+          specialization in Automotive Engineering. That foundation made me comfortable with systems,
+          instrumentation and the details behind vehicle behavior.
         </p>
         <p>
-          My path started in electrical engineering and vehicle systems, then naturally expanded into Python
-          automation as I saw how much engineering time could be saved by making analysis pipelines clearer,
-          faster, and repeatable.
+          In R&D, I saw the same pattern repeatedly: valuable measurements were available, but the path from raw
+          test data to decisions was still too manual. That is where Python, Pandas and visualization became a
+          natural extension of the engineering work.
         </p>
         <p>
-          My edge is understanding both sides of the workflow: the technical context behind vehicle tests and
-          the data layer needed to turn raw measurements into decisions, dashboards, and executive-ready reports.
+          The advantage I bring is domain translation. I understand the vehicle development context and can also
+          build the data layer that turns technical measurements into reusable analysis tools, dashboards and
+          reports.
         </p>
       </div>
     </section>
   );
 }
 
-function Metrics() {
-  return (
-    <section className="section metrics" aria-label="Professional highlights">
-      {metrics.map((metric) => (
-        <article className="metric-card" key={metric.value}>
-          <span className="metric-value">{metric.value}</span>
-          <span className="metric-label">{metric.label}</span>
-        </article>
-      ))}
-    </section>
-  );
-}
-
-function Work() {
+function Projects() {
   const [activeFilter, setActiveFilter] = useState("all");
 
   const filteredProjects = useMemo(() => {
@@ -344,15 +460,17 @@ function Work() {
   }, [activeFilter]);
 
   return (
-    <section className="section" id="work" aria-labelledby="work-title">
-      <div className="section-heading work-heading">
-        <div>
-          <p className="section-kicker">Featured Work</p>
-          <h2 id="work-title">Selected data and automation themes</h2>
-        </div>
-        <div className="filter-controls" aria-label="Filter featured work">
+    <section className="section" id="projects" aria-labelledby="projects-title">
+      <div className="section-row">
+        <SectionHeading
+          kicker="Featured Projects"
+          title="Case studies and portfolio tracks"
+          copy="A focused set of work themes around automotive data, automation and practical analytics interfaces."
+        />
+        <div className="filter-controls" aria-label="Filter featured projects">
           {filters.map((filter) => (
             <button
+              aria-pressed={filter.value === activeFilter}
               className={filter.value === activeFilter ? "filter-button is-active" : "filter-button"}
               key={filter.value}
               type="button"
@@ -366,16 +484,89 @@ function Work() {
       <div className="project-grid">
         {filteredProjects.map((project) => (
           <article className="project-card" key={project.title}>
-            <p className="project-type">{project.type}</p>
+            <div className="project-card-top">
+              <p className="project-type">{project.type}</p>
+              <span className="status-pill">{project.status}</span>
+            </div>
             <h3>{project.title}</h3>
             <p>{project.description}</p>
-            <div className="tag-list" aria-label={`${project.title} technologies`}>
-              {project.tags.map((tag) => (
+            <div className="impact-row">
+              <Gauge size={18} aria-hidden="true" />
+              <span>{project.impact}</span>
+            </div>
+            <div className="tag-list" aria-label={`${project.title} stack`}>
+              {project.stack.map((tag) => (
                 <span key={tag}>{tag}</span>
               ))}
             </div>
+            {project.link ? (
+              <a className="project-link" href={project.link}>
+                Open project
+                <ExternalLink size={16} aria-hidden="true" />
+              </a>
+            ) : null}
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function Skills() {
+  return (
+    <section className="section" id="stack" aria-labelledby="stack-title">
+      <SectionHeading
+        kicker="Skills"
+        title="Tools grouped by the problems they solve"
+        copy="A compact stack built around data cleaning, engineering analysis, dashboards and automotive systems."
+      />
+      <div className="stack-grid">
+        {stackGroups.map((group) => {
+          const Icon = group.icon;
+          return (
+            <article className="stack-group" key={group.title}>
+              <div className="stack-heading">
+                <Icon size={20} aria-hidden="true" />
+                <h3>{group.title}</h3>
+              </div>
+              <ul>
+                {group.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function Experience() {
+  return (
+    <section className="section experience-section" id="experience" aria-labelledby="experience-title">
+      <SectionHeading
+        kicker="Experience"
+        title="R&D, data workflows and hands-on automotive systems"
+        copy="A timeline of the technical context behind the portfolio, kept intentionally honest and focused."
+      />
+      <div className="timeline">
+        {timelineItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <article className="timeline-item" key={`${item.title}-${item.place}`}>
+              <div className="timeline-marker">
+                <Icon size={20} aria-hidden="true" />
+              </div>
+              <div className="timeline-content">
+                <p className="timeline-label">{item.label}</p>
+                <h3>{item.title}</h3>
+                <p className="timeline-place">{item.place}</p>
+                <p>{item.detail}</p>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -383,37 +574,14 @@ function Work() {
 
 function Focus() {
   return (
-    <section className="section focus-band" aria-labelledby="focus-title">
+    <section className="focus-band" aria-labelledby="focus-title">
       <div>
         <p className="section-kicker">Current Focus</p>
-        <h2 id="focus-title">Building toward remote data and automation roles.</h2>
+        <h2 id="focus-title">Deepening the analytics layer around technical data.</h2>
       </div>
-      <ul className="focus-list">
+      <div className="focus-list" aria-label="Current focus areas">
         {focusItems.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function Stack() {
-  return (
-    <section className="section" id="stack" aria-labelledby="stack-title">
-      <div className="section-heading">
-        <p className="section-kicker">Tech Stack</p>
-        <h2 id="stack-title">Tools grouped by how I use them</h2>
-      </div>
-      <div className="stack-grid">
-        {stackGroups.map((group) => (
-          <article className="stack-group" key={group.title}>
-            <h3>{group.title}</h3>
-            <ul>
-              {group.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </article>
+          <span key={item}>{item}</span>
         ))}
       </div>
     </section>
@@ -425,19 +593,38 @@ function Contact() {
     <section className="section contact-section" id="contact" aria-labelledby="contact-title">
       <div>
         <p className="section-kicker">Contact</p>
-        <h2 id="contact-title">Open to data analytics and automation conversations.</h2>
+        <h2 id="contact-title">Let's build something useful from complex data.</h2>
         <p>
-          I am interested in remote and hybrid roles where automotive domain knowledge, Python tooling, and
-          analytics can make technical teams faster and more effective.
+          I am interested in remote and hybrid opportunities across Data Analytics, Automation Engineering and
+          Python tooling, especially where engineering domain knowledge matters.
         </p>
       </div>
-      <div className="contact-panel">
-        <p className="contact-label">Best fit</p>
-        <p>Data Analytics, Automation Engineering, Python tooling, AI/Data Analytics.</p>
-        <p className="contact-note">
-          Best conversations start with practical problems: messy test data, repetitive reports, internal tools,
-          dashboards, and workflows that should be easier to trust.
-        </p>
+      <div className="contact-links">
+        {contactLinks.map((link) => {
+          const Icon = link.icon;
+          const content = (
+            <>
+              <span className="contact-icon">
+                <Icon size={20} aria-hidden="true" />
+              </span>
+              <span>
+                <strong>{link.label}</strong>
+                <small>{link.detail}</small>
+              </span>
+              {link.href ? <ExternalLink size={16} aria-hidden="true" /> : null}
+            </>
+          );
+
+          return link.href ? (
+            <a className="contact-link" href={link.href} key={link.label}>
+              {content}
+            </a>
+          ) : (
+            <span className="contact-link is-disabled" key={link.label} aria-disabled="true">
+              {content}
+            </span>
+          );
+        })}
       </div>
     </section>
   );
@@ -449,15 +636,16 @@ export default function App() {
       <Header />
       <main id="top">
         <Hero />
+        <ProofStrip />
         <About />
-        <Metrics />
-        <Work />
+        <Projects />
+        <Skills />
+        <Experience />
         <Focus />
-        <Stack />
         <Contact />
       </main>
       <footer className="site-footer">
-        <span>Felipe Arthur Eckert</span>
+        <span>{profile.name}</span>
         <span>Data Analyst & Automation Engineer</span>
       </footer>
     </>
