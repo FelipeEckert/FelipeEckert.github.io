@@ -368,12 +368,15 @@ h3 {
   margin: 0;
   padding: 0;
   flex-shrink: 0;
-  transform: translateY(1px);
 }
 
 .pipeline-step strong,
-.pipeline-step span {
+.pipeline-step > div > span {
   display: block;
+}
+
+.pipeline-step > div {
+  min-width: 0;
 }
 
 .pipeline-step strong {
@@ -383,7 +386,7 @@ h3 {
   line-height: 1.2;
 }
 
-.pipeline-step span {
+.pipeline-step > div > span {
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 680;
