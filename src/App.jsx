@@ -122,26 +122,50 @@ const filters = [
   { label: "Automotive", value: "automotive" },
 ];
 
-const stackGroups = [
+const toolkitHighlights = ["Clean data", "Automate analysis", "Build dashboards"];
+
+const toolkitGroups = [
   {
     icon: Database,
-    title: "Data & Analytics",
-    items: ["Python", "Pandas", "NumPy", "Matplotlib", "Plotly", "Scikit-learn"],
-  },
-  {
-    icon: Activity,
-    title: "Apps & Visualization",
-    items: ["Streamlit", "Plotly Dash", "Power BI"],
-  },
-  {
-    icon: Cpu,
-    title: "Automotive & Embedded",
-    items: ["CANalyzer", "CANoe", "INCA", "ECU calibration", "CAN bus", "MATLAB/Simulink", "C++"],
+    title: "Data Processing & Analysis",
+    description: "Cleaning, structuring and analyzing messy test datasets.",
+    skills: ["Python", "Pandas", "NumPy", "SQL learning"],
+    context: "vehicle test data, CSV processing, time-series analysis, coefficient calculations",
   },
   {
     icon: Wrench,
-    title: "Tools",
-    items: ["Git", "GitHub", "Automation workflows", "Technical reporting"],
+    title: "Automation & Reporting",
+    description: "Turning repetitive engineering analyses into reusable Python workflows.",
+    skills: ["Python scripts", "Git", "GitHub", "Automated reports", "Workflow automation"],
+    context: "road-load/coastdown calculations, executive summaries, repeatable analysis pipelines",
+  },
+  {
+    icon: Activity,
+    title: "Dashboards & Visualization",
+    description: "Building interfaces and visual outputs that make technical results easier to understand.",
+    skills: ["Matplotlib", "Plotly", "Streamlit", "Plotly Dash", "Power BI in progress"],
+    context: "interactive dashboards, technical plots, report visuals",
+  },
+  {
+    icon: Cpu,
+    title: "Automotive Data Systems",
+    description: "Working close to vehicle systems, test data and calibration environments.",
+    skills: ["CAN bus", "CANalyzer", "CANoe", "INCA", "ECU calibration", "Chassis dynamometer data", "Road tests"],
+    context: "CAN reverse engineering, diagnostic procedures, powertrain and energy-efficiency analysis",
+  },
+  {
+    icon: GraduationCap,
+    title: "Engineering Foundations",
+    description: "Engineering background that helps me understand the systems behind the data.",
+    skills: ["Vehicle dynamics", "Coastdown analysis", "MATLAB/Simulink", "C++", "ARM architecture", "PCB design"],
+    context: "automotive engineering, embedded systems, telemetry and powertrain development",
+  },
+  {
+    icon: Layers,
+    title: "Current Growth",
+    description: "Areas I am actively developing to expand my data and automation profile.",
+    skills: ["SQL", "Power BI", "Scikit-learn", "Machine learning basics", "Generative AI tooling"],
+    context: "remote-oriented data analytics, AI-assisted analytics, portfolio projects",
   },
 ];
 
@@ -514,26 +538,41 @@ function Projects() {
 
 function Skills() {
   return (
-    <section className="section" id="stack" aria-labelledby="stack-title">
+    <section className="section toolkit-section" id="stack" aria-labelledby="stack-title">
       <SectionHeading
-        kicker="Skills"
-        title="Tools grouped by the problems they solve"
-        copy="A compact stack built around data cleaning, engineering analysis, dashboards and automotive systems."
+        kicker="Technical Toolkit"
+        title="How I turn raw technical data into useful tools"
+        copy="A practical toolkit organized around the problems I solve: cleaning vehicle data, automating engineering analysis and making results easier to understand."
       />
-      <div className="stack-grid">
-        {stackGroups.map((group) => {
+      <div className="toolkit-capabilities" aria-label="Core capabilities">
+        {toolkitHighlights.map((highlight) => (
+          <span key={highlight}>{highlight}</span>
+        ))}
+      </div>
+      <div className="toolkit-grid">
+        {toolkitGroups.map((group) => {
           const Icon = group.icon;
           return (
-            <article className="stack-group" key={group.title}>
-              <div className="stack-heading">
-                <Icon size={20} aria-hidden="true" />
-                <h3>{group.title}</h3>
+            <article className="toolkit-card" key={group.title}>
+              <div className="toolkit-card-header">
+                <span className="toolkit-icon">
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <div>
+                  <h3>{group.title}</h3>
+                  <p>{group.description}</p>
+                </div>
               </div>
-              <ul>
-                {group.items.map((item) => (
-                  <li key={item}>{item}</li>
+              <div className="skill-pill-list" aria-label={`${group.title} skills`}>
+                {group.skills.map((skill) => (
+                  <span className="skill-pill" key={skill}>
+                    {skill}
+                  </span>
                 ))}
-              </ul>
+              </div>
+              <p className="applied-line">
+                <span>Applied to:</span> {group.context}
+              </p>
             </article>
           );
         })}
