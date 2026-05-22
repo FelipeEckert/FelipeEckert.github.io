@@ -33,10 +33,39 @@ const navItems = [
   { label: "Contact", href: "#contact" },
 ];
 
-const heroStats = [
-  { value: "80%", label: "faster road-load analysis" },
-  { value: "R&D", label: "energy efficiency and data analytics" },
-  { value: "C1", label: "English, plus PT native and ES B1" },
+const pipelineSteps = [
+  {
+    icon: Gauge,
+    label: "Vehicle / Dyno Test",
+    detail: "road and chassis dyno signals",
+  },
+  {
+    icon: Database,
+    label: "CAN + CSV Logs",
+    detail: "raw measurements and test files",
+  },
+  {
+    icon: Code2,
+    label: "Python Cleaning",
+    detail: "Pandas, NumPy and validation",
+  },
+  {
+    icon: Wrench,
+    label: "Road-load Coefficients",
+    detail: "coastdown calculations",
+  },
+  {
+    icon: Activity,
+    label: "Dashboard / Report",
+    detail: "visual outputs for decisions",
+  },
+];
+
+const pipelineOutputs = [
+  "Road-load coefficients",
+  "Run consistency checks",
+  "Dashboard-ready data",
+  "Executive summary",
 ];
 
 const proofPoints = [
@@ -231,9 +260,9 @@ function VehicleDataCanvas() {
     let animationFrame = 0;
 
     const traces = [
-      { color: "rgba(58, 214, 176, 0.82)", amplitude: 34, speed: 0.012, offset: 0 },
-      { color: "rgba(245, 178, 91, 0.68)", amplitude: 25, speed: 0.017, offset: 84 },
-      { color: "rgba(196, 92, 104, 0.55)", amplitude: 20, speed: 0.021, offset: 156 },
+      { color: "rgba(58, 214, 176, 0.46)", amplitude: 18, speed: 0.012, y: 0.28 },
+      { color: "rgba(245, 178, 91, 0.34)", amplitude: 14, speed: 0.017, y: 0.5 },
+      { color: "rgba(196, 92, 104, 0.28)", amplitude: 12, speed: 0.021, y: 0.68 },
     ];
 
     function resizeCanvas() {
@@ -247,17 +276,17 @@ function VehicleDataCanvas() {
     }
 
     function drawGrid() {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.055)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.045)";
       ctx.lineWidth = 1;
 
-      for (let x = 0; x < width; x += 72) {
+      for (let x = 0; x < width; x += 64) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
 
-      for (let y = 0; y < height; y += 72) {
+      for (let y = 0; y < height; y += 64) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
@@ -266,13 +295,13 @@ function VehicleDataCanvas() {
     }
 
     function drawTrace(trace, time) {
-      const baseline = height * 0.45 + trace.offset * 0.42;
+      const baseline = height * trace.y;
       ctx.beginPath();
 
-      for (let x = -20; x <= width + 20; x += 8) {
-        const waveA = Math.sin(x * 0.011 + time * trace.speed);
-        const waveB = Math.cos(x * 0.025 + time * trace.speed * 0.7);
-        const y = baseline + waveA * trace.amplitude + waveB * trace.amplitude * 0.3;
+      for (let x = -20; x <= width + 20; x += 18) {
+        const waveA = Math.sin(x * 0.018 + time * trace.speed);
+        const waveB = Math.cos(x * 0.007 + time * trace.speed * 0.55);
+        const y = baseline + waveA * trace.amplitude + waveB * trace.amplitude * 0.36;
 
         if (x === -20) {
           ctx.moveTo(x, y);
@@ -282,18 +311,55 @@ function VehicleDataCanvas() {
       }
 
       ctx.strokeStyle = trace.color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
     }
 
-    function drawScan(time) {
-      const x = ((time * 0.04) % (width + 160)) - 80;
-      const gradient = ctx.createLinearGradient(x - 80, 0, x + 80, 0);
-      gradient.addColorStop(0, "rgba(58, 214, 176, 0)");
-      gradient.addColorStop(0.5, "rgba(58, 214, 176, 0.18)");
-      gradient.addColorStop(1, "rgba(58, 214, 176, 0)");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(x - 80, 0, 160, height);
+    function drawDataFlow(time) {
+      const lanes = [0.23, 0.41, 0.59, 0.74];
+
+      lanes.forEach((lane, laneIndex) => {
+        const y = height * lane;
+        ctx.strokeStyle = "rgba(58, 214, 176, 0.11)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(width * 0.42, y);
+        ctx.lineTo(width * 0.96, y);
+        ctx.stroke();
+
+        for (let index = 0; index < 4; index += 1) {
+          const progress = ((time * 0.00009 * (laneIndex + 1) + index / 4) % 1);
+          const x = width * (0.42 + progress * 0.54);
+          ctx.beginPath();
+          ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = laneIndex % 2 === 0 ? "rgba(58, 214, 176, 0.7)" : "rgba(245, 178, 91, 0.55)";
+          ctx.fill();
+        }
+      });
+    }
+
+    function drawSystemNodes(time) {
+      const nodes = [
+        { x: 0.55, y: 0.18 },
+        { x: 0.7, y: 0.33 },
+        { x: 0.83, y: 0.53 },
+        { x: 0.61, y: 0.72 },
+        { x: 0.9, y: 0.79 },
+      ];
+
+      nodes.forEach((node, index) => {
+        const pulse = Math.sin(time * 0.003 + index) * 0.5 + 0.5;
+        const x = width * node.x;
+        const y = height * node.y;
+        ctx.beginPath();
+        ctx.arc(x, y, 4 + pulse * 2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(58, 214, 176, 0.16)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(216, 239, 232, 0.72)";
+        ctx.fill();
+      });
     }
 
     function draw(time) {
@@ -302,7 +368,8 @@ function VehicleDataCanvas() {
       ctx.fillRect(0, 0, width, height);
       drawGrid();
       traces.forEach((trace) => drawTrace(trace, time));
-      drawScan(time);
+      drawDataFlow(time);
+      drawSystemNodes(time);
 
       if (!prefersReducedMotion) {
         animationFrame = requestAnimationFrame(draw);
@@ -356,27 +423,42 @@ function Header() {
 
 function HeroVisual() {
   return (
-    <aside className="hero-visual" aria-label="Vehicle analytics dashboard mockup">
-      <div className="visual-topbar">
-        <span>coastdown_analysis.py</span>
-        <span>running</span>
+    <aside className="hero-visual" aria-label="Vehicle data pipeline from tests to reports">
+      <div className="pipeline-topbar">
+        <div>
+          <span className="pipeline-kicker">Vehicle Data Pipeline</span>
+          <strong>From test data to actionable reports</strong>
+        </div>
+        <span className="pipeline-badge">~80% faster road-load analysis</span>
       </div>
-      <div className="code-block" aria-hidden="true">
-        <span>df = load_vehicle_test_data()</span>
-        <span>coefficients = fit_road_load(df)</span>
-        <span>report.export("executive_summary")</span>
+      <div className="pipeline-flow">
+        {pipelineSteps.map((step, index) => {
+          const Icon = step.icon;
+          return (
+            <div className="pipeline-step" key={step.label}>
+              <span className="pipeline-step-icon">
+                <Icon size={18} aria-hidden="true" />
+              </span>
+              <div>
+                <strong>{step.label}</strong>
+                <span>{step.detail}</span>
+              </div>
+              {index < pipelineSteps.length - 1 ? <span className="pipeline-connector" aria-hidden="true" /> : null}
+            </div>
+          );
+        })}
       </div>
-      <div className="chart-window" aria-hidden="true">
-        <div className="chart-line chart-line-a" />
-        <div className="chart-line chart-line-b" />
-        <div className="chart-line chart-line-c" />
+      <div className="pipeline-output">
+        <p>Useful outputs</p>
+        <div>
+          {pipelineOutputs.map((output) => (
+            <span key={output}>{output}</span>
+          ))}
+        </div>
       </div>
-      <div className="visual-metrics">
-        {heroStats.map((stat) => (
-          <div className="visual-metric" key={stat.value}>
-            <strong>{stat.value}</strong>
-            <span>{stat.label}</span>
-          </div>
+      <div className="pipeline-stack" aria-label="Pipeline stack">
+        {["Python", "Pandas", "NumPy", "Plotly", "Streamlit", "CAN data"].map((tool) => (
+          <span key={tool}>{tool}</span>
         ))}
       </div>
     </aside>
