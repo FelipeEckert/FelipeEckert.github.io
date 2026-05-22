@@ -336,10 +336,10 @@ h3 {
 .pipeline-step {
   position: relative;
   display: grid;
-  grid-template-columns: 3rem 1fr;
-  gap: 1rem;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.68rem;
   align-items: center;
-  min-height: 3.5rem;
+  min-height: 2.72rem;
   padding: 0.5rem 0.62rem;
   border: 1px solid rgba(255, 255, 255, 0.11);
   border-radius: 8px;
@@ -349,21 +349,26 @@ h3 {
 .pipeline-step-icon {
   display: grid;
   place-items: center;
-  width: 3rem;
-  min-width: 3rem;
-  height: 3rem;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
   border: 1px solid rgba(58, 214, 176, 0.26);
   border-radius: 8px;
   background: rgba(58, 214, 176, 0.1);
   color: var(--teal);
-  line-height: 1;
+  line-height: 0;
 }
 
 .pipeline-step-svg {
+  position: relative;
   display: block;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
+  transform: translateY(1px);
 }
 
 .pipeline-step strong,
@@ -386,7 +391,7 @@ h3 {
 
 .pipeline-connector {
   position: absolute;
-  left: 2.1rem;
+  left: 1.74rem;
   bottom: -0.58rem;
   width: 1px;
   height: 0.58rem;
@@ -1085,18 +1090,18 @@ h3 {
   }
 
   .pipeline-step-icon {
-    width: 2.75rem;
-    min-width: 2.75rem;
-    height: 2.75rem;
+    width: 2rem;
+    min-width: 2rem;
+    height: 2rem;
   }
 
   .pipeline-step-svg {
-    width: 1.35rem;
-    height: 1.35rem;
+    width: 1.08rem;
+    height: 1.08rem;
   }
 
   .pipeline-connector {
-    left: 1.98rem;
+    left: 1.6rem;
   }
 
   .proof-strip,

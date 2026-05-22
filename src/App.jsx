@@ -437,7 +437,7 @@ function HeroVisual() {
           return (
             <div className="pipeline-step" key={step.label}>
               <span className="pipeline-step-icon">
-                <Icon className="pipeline-step-svg" size={24} strokeWidth={1.8} aria-hidden="true" />
+                <Icon className="pipeline-step-svg" size={18} strokeWidth={2} aria-hidden="true" />
               </span>
               <div>
                 <strong>{step.label}</strong>
