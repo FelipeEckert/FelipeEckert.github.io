@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 // - Two soft "lights" (mint and warm sand) wander across the page and tint the
 //   dots they pass over, so the matrix reads as a gradient, not flat grey.
 // - A slow diagonal wave sweeps through every few seconds, like a scan.
+// - A few faint streaks drift left to right, like flow over a car body.
 // - The pointer acts as a soft lamp that warms nearby dots; scrolling shifts the grid slightly
 //   slower than the content for depth.
 // Everything stays very faint; reduced-motion users get one static frame.
@@ -51,6 +52,7 @@ export default function Backdrop() {
     const ctx = canvas.getContext("2d");
     const noise = makeNoise();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const flow = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), trail: [], life: Math.random() }));
     const lamp = { x: -9999, y: -9999, tx: -9999, ty: -9999, power: 0, target: 0 };
     let width = 0;
     let height = 0;
@@ -111,10 +113,40 @@ export default function Backdrop() {
           const r = STONE[0] + (MINT[0] - STONE[0]) * tintM + (SAND[0] - STONE[0]) * tintS;
           const g = STONE[1] + (MINT[1] - STONE[1]) * tintM + (SAND[1] - STONE[1]) * tintS;
           const b = STONE[2] + (MINT[2] - STONE[2]) * tintM + (SAND[2] - STONE[2]) * tintS;
-          const size = 0.9 + field * 0.8 + glowM * 1.3 + glowS * 0.8 + ripple * 1.1;
+          const size = 0.75 + field * 0.6 + glowM * 1.05 + glowS * 0.65 + ripple * 0.95;
 
           ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${Math.min(0.85, energy).toFixed(3)})`;
           ctx.fillRect(x - size / 2, y - size / 2, size, size);
+        }
+      }
+
+      // faint left-to-right flow, like air over a body or data moving through a pipeline
+      ctx.lineWidth = 1;
+      for (let i = 0; i < flow.length; i += 1) {
+        const f = flow[i];
+        const px = f.x * width;
+        const py = f.y * height;
+        const angle = noise(px * 0.0022 + t * 0.03, py * 0.0022) * 1.1;
+        f.x += (Math.cos(angle) * 0.9 + 0.55) / width;
+        f.y += (Math.sin(angle) * 0.6) / height;
+        f.life = Math.min(1, f.life + 0.006);
+        f.trail.push([f.x * width, f.y * height]);
+        if (f.trail.length > 26) f.trail.shift();
+        if (f.x > 1.02 || f.y < -0.02 || f.y > 1.02) {
+          f.x = -0.02;
+          f.y = Math.random();
+          f.trail = [];
+          f.life = 0;
+        }
+        if (f.trail.length < 2) continue;
+        const tint = i % 6 === 0 ? MINT : STONE;
+        for (let k = 1; k < f.trail.length; k += 1) {
+          const a = (k / f.trail.length) * 0.16 * f.life;
+          ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${a.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(f.trail[k - 1][0], f.trail[k - 1][1]);
+          ctx.lineTo(f.trail[k][0], f.trail[k][1]);
+          ctx.stroke();
         }
       }
 
