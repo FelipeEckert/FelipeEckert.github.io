@@ -61,7 +61,7 @@ ol, ul { padding: 0; list-style: none; }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
-.brand { font-family: var(--serif); font-size: 34px; letter-spacing: 0.005em; text-decoration: none; line-height: 1; }
+.brand { font-family: var(--serif); font-size: 30px; letter-spacing: 0.005em; text-decoration: none; line-height: 1; }
 .site-header nav { display: flex; gap: 28px; }
 .site-header nav a { color: var(--stone); text-decoration: none; font-size: 15px; transition: color 0.3s var(--ease); }
 .site-header nav a:hover { color: var(--cream); }
@@ -280,7 +280,7 @@ ol, ul { padding: 0; list-style: none; }
 }
 @media (max-width: 560px) {
   :root { --header: 62px; }
-  .brand { font-size: 27px; }
+  .brand { font-size: 25px; }
   body { font-size: 16px; }
   .site-header nav { gap: 18px; }
   .results { grid-template-columns: 1fr; }

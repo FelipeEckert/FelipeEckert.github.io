@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 // coarse grid, throttled, and frozen when the user prefers reduced motion.
 
 const LEVELS = [-0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45];
-const CELL = 28;
-const FPS = 24;
+const CELL = 22;
+const FPS = 60;
 
 function makeNoise(seed = 7) {
   const perm = new Uint8Array(512);
@@ -71,7 +71,7 @@ export default function Backdrop() {
         for (let c = 0; c < cols; c += 1) {
           const x = c * CELL * scale;
           const y = r * CELL * scale;
-          field[r * cols + c] = noise(x + t * 0.05, y - t * 0.03) + 0.5 * noise(x * 2.1 - t * 0.04, y * 2.1 + 3.7);
+          field[r * cols + c] = noise(x + t * 0.022, y - t * 0.014) + 0.5 * noise(x * 2.1 - t * 0.018, y * 2.1 + 3.7);
         }
       }
     }
@@ -85,7 +85,7 @@ export default function Backdrop() {
       ctx.lineWidth = 1;
       LEVELS.forEach((level, li) => {
         const major = li === 3;
-        ctx.strokeStyle = major ? "rgba(133, 237, 165, 0.13)" : "rgba(149, 144, 137, 0.14)";
+        ctx.strokeStyle = major ? "rgba(133, 237, 165, 0.07)" : "rgba(149, 144, 137, 0.075)";
         ctx.beginPath();
         for (let r = 0; r < rows - 1; r += 1) {
           for (let c = 0; c < cols - 1; c += 1) {
