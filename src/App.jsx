@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
 import DataField from "./DataField.jsx";
+import StoryCanvas from "./StoryCanvas.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -19,24 +20,28 @@ const profile = {
 };
 
 const results = [
-  { value: "~80%", label: "less time per road-load analysis after automating it in Python" },
-  { value: "< 5%", label: "result variability after automated validation, against a 10% limit in the standard" },
+  { value: "~80%", from: 0, to: 80, prefix: "~", suffix: "%", label: "less time per road-load analysis after automating it in Python" },
+  { value: "< 5%", from: 12, to: 5, prefix: "< ", suffix: "%", label: "result variability after automated validation, against a 10% limit in the standard" },
   { value: "1st", label: "place at the Hyundai Prompt-a-thon 2026, with an AI reporting hub" },
-  { value: "2026", label: "paper published at SIMEA, the Brazilian automotive engineering symposium" },
+  { value: "2026", from: 2018, to: 2026, label: "paper published at SIMEA, the Brazilian automotive engineering symposium" },
 ];
 
 const workflow = [
   {
-    title: "Collect and validate",
-    copy: "Pull raw files from different test systems, standardize them, and check every run against clear rules before it reaches the analysis.",
+    title: "Collect",
+    copy: "Raw files arrive from different test systems, each with its own format, plus noise and a few runs that went wrong on the track.",
+  },
+  {
+    title: "Validate",
+    copy: "Every run is checked against clear rules before it reaches the analysis. Outliers are flagged and removed, not argued about later.",
   },
   {
     title: "Analyze",
-    copy: "Find the trends, outliers and drivers in the data with Python, pandas and statistics, and keep the steps repeatable.",
+    copy: "The model is fitted to the clean data with Python, pandas and statistics, and every step is repeatable for the next test.",
   },
   {
     title: "Report",
-    copy: "Turn the result into charts, dashboards and short written conclusions that engineers and managers can decide on.",
+    copy: "The result becomes a chart and a short conclusion people can decide on: here, run-to-run variability well below the 10% limit.",
   },
 ];
 
@@ -120,32 +125,103 @@ function useMotion() {
     const ctx = gsap.context(() => {
       document.fonts.ready.then(() => {
         const split = SplitText.create(".hero h1", { type: "lines", mask: "lines" });
-        gsap.from(split.lines, {
-          yPercent: 110,
-          duration: 1.1,
-          ease: "expo.out",
-          stagger: 0.09,
-          delay: 0.15,
-        });
-        gsap.from(".hero-sub, .hero-actions", {
+        gsap.from(split.lines, { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.09, delay: 0.15 });
+        gsap.from(".hero-kicker, .hero-sub, .hero-actions", {
           opacity: 0,
-          y: 12,
+          y: 14,
           duration: 0.9,
           ease: "power3.out",
-          delay: 0.65,
+          delay: 0.55,
           stagger: 0.08,
         });
+
+        gsap.utils.toArray(".section > h2").forEach((heading) => {
+          const lines = SplitText.create(heading, { type: "lines", mask: "lines" }).lines;
+          gsap.from(lines, {
+            yPercent: 110,
+            duration: 1,
+            ease: "expo.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: heading, start: "top 85%" },
+          });
+        });
+        ScrollTrigger.refresh();
       });
 
+      // the hero data field drifts slower than the page, then fades as you leave it
+      gsap.to(".datafield", {
+        yPercent: 18,
+        opacity: 0.25,
+        ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true },
+      });
+
+      // result counters
+      gsap.utils.toArray(".result").forEach((el, i) => {
+        const value = el.querySelector(".result-value");
+        const from = Number(value.dataset.from);
+        const to = Number(value.dataset.to);
+        const prefix = value.dataset.prefix || "";
+        const suffix = value.dataset.suffix || "";
+        const counter = { v: from };
+        gsap.from(el, {
+          opacity: 0,
+          y: 24,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: i * 0.08,
+          scrollTrigger: { trigger: ".results", start: "top 88%" },
+        });
+        if (!Number.isNaN(from) && !Number.isNaN(to)) {
+          value.textContent = `${prefix}${from}${suffix}`;
+          gsap.to(counter, {
+            v: to,
+            duration: 1.6,
+            ease: "power2.out",
+            delay: 0.15 + i * 0.08,
+            onUpdate: () => {
+              value.textContent = `${prefix}${Math.round(counter.v)}${suffix}`;
+            },
+            scrollTrigger: { trigger: ".results", start: "top 88%" },
+          });
+        }
+      });
+
+      // work entries assemble as they scroll in
+      gsap.utils.toArray(".work-item").forEach((item) => {
+        const tl = gsap.timeline({ scrollTrigger: { trigger: item, start: "top 82%" } });
+        tl.from(item, { "--rule": 0, duration: 1.2, ease: "expo.out" })
+          .from(item.querySelector("header"), { opacity: 0, x: -24, duration: 0.9, ease: "power3.out" }, 0)
+          .from(item.querySelectorAll("dl > div"), { opacity: 0, y: 18, duration: 0.7, ease: "power3.out", stagger: 0.09 }, 0.12)
+          .from(item.querySelectorAll(".stack li"), { opacity: 0, scale: 0.9, duration: 0.4, ease: "back.out(2)", stagger: 0.04 }, 0.4);
+      });
+
+      // about: skills rows and timeline
+      gsap.from(".skills > div", {
+        opacity: 0,
+        x: -16,
+        duration: 0.6,
+        ease: "power3.out",
+        stagger: 0.07,
+        scrollTrigger: { trigger: ".skills", start: "top 85%" },
+      });
       gsap.fromTo(
-        ".workflow-rail span",
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: { trigger: ".workflow", start: "top 70%", end: "bottom 60%", scrub: true },
-        },
+        ".timeline",
+        { "--line": 0 },
+        { "--line": 1, ease: "none", scrollTrigger: { trigger: ".timeline", start: "top 80%", end: "bottom 60%", scrub: true } },
       );
+      gsap.utils.toArray(".timeline li").forEach((li) => {
+        gsap.from(li, { opacity: 0, y: 20, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: li, start: "top 85%" } });
+      });
+
+      gsap.from(".contact ul li", {
+        opacity: 0,
+        y: 16,
+        duration: 0.6,
+        ease: "power3.out",
+        stagger: 0.07,
+        scrollTrigger: { trigger: ".contact ul", start: "top 92%" },
+      });
     });
 
     return () => {
@@ -203,7 +279,15 @@ function Results() {
     <section className="results" aria-label="Results">
       {results.map((item) => (
         <div className="result" key={item.label}>
-          <p className="result-value">{item.value}</p>
+          <p
+            className="result-value"
+            data-from={item.from}
+            data-to={item.to}
+            data-prefix={item.prefix}
+            data-suffix={item.suffix}
+          >
+            {item.value}
+          </p>
           <p className="result-label">{item.label}</p>
         </div>
       ))}
@@ -212,24 +296,55 @@ function Results() {
 }
 
 function Workflow() {
+  const progressRef = useRef(0);
+  const sectionRef = useRef(null);
+  const [active, setActive] = useState(0);
+  const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  useEffect(() => {
+    if (reduced) {
+      progressRef.current = workflow.length;
+      setActive(workflow.length - 1);
+      return undefined;
+    }
+    const trigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        const p = self.progress * workflow.length;
+        progressRef.current = p;
+        setActive(Math.min(workflow.length - 1, Math.floor(p)));
+        sectionRef.current.style.setProperty("--story", self.progress.toFixed(4));
+      },
+    });
+    return () => trigger.kill();
+  }, [reduced]);
+
   return (
-    <section className="section workflow" aria-labelledby="workflow-title">
-      <h2 id="workflow-title">How I work with data</h2>
-      <div className="workflow-body">
-        <div className="workflow-rail" aria-hidden="true">
-          <span />
+    <section className={reduced ? "story is-static" : "story"} ref={sectionRef} aria-labelledby="workflow-title">
+      <div className="story-sticky">
+        <div className="story-text">
+          <h2 id="workflow-title">How I work with data</h2>
+          <p className="story-note">One real coastdown test, from raw file to decision. Keep scrolling.</p>
+          <ol className="story-steps">
+            {workflow.map((step, index) => (
+              <li key={step.title} className={index === active ? "is-active" : index < active ? "is-done" : ""}>
+                <span className="step-index">{index + 1}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.copy}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <div className="story-progress" aria-hidden="true">
+            <span />
+          </div>
         </div>
-        <ol>
-          {workflow.map((step, index) => (
-            <li key={step.title}>
-              <span className="step-index">{index + 1}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.copy}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <div className="story-visual">
+          <StoryCanvas progressRef={progressRef} />
+        </div>
       </div>
     </section>
   );
