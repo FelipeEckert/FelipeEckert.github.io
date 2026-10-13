@@ -118,19 +118,36 @@ ol, ul { padding: 0; list-style: none; }
 .btn-primary { background: var(--cream); color: var(--black); border-color: var(--cream); }
 .btn-primary:hover { background: var(--signal); border-color: var(--signal); }
 
-.datafield { position: relative; height: min(560px, 62vh); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.datafield canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.datafield figcaption {
+
+.livefit {
+  position: relative;
+  height: min(560px, 64vh);
+  margin: 0;
+  padding: 0 0 40px;
+  background: var(--black);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 0 0 12px rgba(12, 12, 11, 0.55), 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+.livefit canvas { position: absolute; inset: 0 0 40px; width: 100%; height: calc(100% - 40px); display: block; cursor: crosshair; }
+.livefit figcaption {
   position: absolute;
-  left: 12px;
+  left: 0;
   right: 0;
-  bottom: -30px;
+  bottom: 0;
+  height: 40px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  border-top: 1px solid var(--line);
   font-family: var(--mono);
   font-size: 12px;
   color: var(--stone);
 }
+.livefit figcaption span { white-space: nowrap; }
+.livefit figcaption span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 /* results */
 .results {
@@ -195,6 +212,7 @@ ol, ul { padding: 0; list-style: none; }
 .story-progress { margin-top: 24px; height: 2px; background: var(--line); max-width: 360px; }
 .story-progress span { display: block; height: 100%; background: var(--signal); transform-origin: left; transform: scaleX(var(--story, 0)); }
 .story-visual { position: relative; height: min(520px, 70svh); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.story-visual::before { content: ""; position: absolute; inset: -6% -4%; background: radial-gradient(closest-side, var(--black) 62%, rgba(12, 12, 11, 0)); pointer-events: none; }
 .story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .story.is-static { height: auto; }
 .story.is-static .story-sticky { position: static; height: auto; padding-block: 64px; }
@@ -277,7 +295,7 @@ ol, ul { padding: 0; list-style: none; }
 /* responsive */
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; min-height: auto; }
-  .datafield { height: 300px; border-left: 0; }
+  .livefit { height: 340px; }
   .story { height: 460vh; }
   .story-sticky { grid-template-columns: 1fr; align-content: start; gap: 16px; padding-top: 20px; }
   .story-visual { order: -1; height: 38svh; border-left: 0; }
@@ -303,7 +321,7 @@ ol, ul { padding: 0; list-style: none; }
   .result + .result { border-top: 1px solid var(--line); }
   .work-item dl div, .skills div { grid-template-columns: 1fr; gap: 4px; }
   .workflow li { grid-template-columns: 32px minmax(0, 1fr); }
-  .datafield figcaption { flex-direction: column; gap: 2px; bottom: -44px; }
+  .livefit figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }

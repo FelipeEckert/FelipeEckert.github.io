@@ -5,7 +5,7 @@ import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
 import Backdrop from "./Backdrop.jsx";
-import DataField from "./DataField.jsx";
+import LiveFit from "./LiveFit.jsx";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -149,10 +149,10 @@ function useMotion() {
         ScrollTrigger.refresh();
       });
 
-      // the hero data field drifts slower than the page, then fades as you leave it
-      gsap.to(".datafield", {
-        yPercent: 18,
-        opacity: 0.25,
+      // the hero chart drifts slower than the page, then fades as you leave it
+      gsap.to(".livefit", {
+        yPercent: 10,
+        opacity: 0.35,
         ease: "none",
         scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true },
       });
@@ -270,7 +270,7 @@ function Hero() {
           </a>
         </div>
       </div>
-      <DataField />
+      <LiveFit />
     </section>
   );
 }

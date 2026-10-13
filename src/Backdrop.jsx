@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 // - Two soft "lights" (mint and warm sand) wander across the page and tint the
 //   dots they pass over, so the matrix reads as a gradient, not flat grey.
 // - A slow diagonal wave sweeps through every few seconds, like a scan.
-// - The pointer leaves expanding ripples; scrolling shifts the grid slightly
+// - The pointer acts as a soft lamp that warms nearby dots; scrolling shifts the grid slightly
 //   slower than the content for depth.
 // Everything stays very faint; reduced-motion users get one static frame.
 
@@ -51,11 +51,10 @@ export default function Backdrop() {
     const ctx = canvas.getContext("2d");
     const noise = makeNoise();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ripples = [];
+    const lamp = { x: -9999, y: -9999, tx: -9999, ty: -9999, power: 0, target: 0 };
     let width = 0;
     let height = 0;
     let frame = 0;
-    let lastRipple = 0;
 
     function resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -75,6 +74,9 @@ export default function Backdrop() {
 
     function draw(ms) {
       const t = ms / 1000;
+      lamp.x += (lamp.tx - lamp.x) * 0.08;
+      lamp.y += (lamp.ty - lamp.y) * 0.08;
+      lamp.power += (lamp.target - lamp.power) * 0.05;
       ctx.clearRect(0, 0, width, height);
 
       const scroll = window.scrollY * 0.12;
@@ -97,41 +99,39 @@ export default function Backdrop() {
           const glowS = Math.max(0, 1 - Math.hypot(x - sx, y - sy) / reachS) ** 2;
           const sweep = Math.exp(-(((x + y - sweepPos) / 120) ** 2)) * 0.6;
 
-          let ripple = 0;
-          for (let k = 0; k < ripples.length; k += 1) {
-            const rp = ripples[k];
-            const age = t - rp.t;
-            const ring = Math.abs(Math.hypot(x - rp.x, y - rp.y) - age * 220);
-            ripple += Math.max(0, 1 - ring / 26) * Math.max(0, 1 - age / 1.6);
-          }
+          const lampDist = Math.hypot(x - lamp.x, y - lamp.y);
+          const ripple = lamp.power * Math.max(0, 1 - lampDist / 190) ** 2;
 
           const vignette = 1 - 0.55 * ((x / width - 0.5) ** 2 + (y / height - 0.5) ** 2) * 2.2;
-          const energy = (0.07 + field * 0.13 + glowM * 0.5 + glowS * 0.38 + sweep * 0.22 + ripple * 0.5) * vignette;
+          const energy = (0.07 + field * 0.13 + glowM * 0.5 + glowS * 0.38 + sweep * 0.22 + ripple * 0.45) * vignette;
           if (energy < 0.03) continue;
 
-          const tintM = Math.min(1, glowM * 1.4 + ripple * 0.8 + sweep * 0.3);
+          const tintM = Math.min(1, glowM * 1.4 + ripple * 0.9 + sweep * 0.3);
           const tintS = Math.min(1 - tintM, glowS * 1.2);
           const r = STONE[0] + (MINT[0] - STONE[0]) * tintM + (SAND[0] - STONE[0]) * tintS;
           const g = STONE[1] + (MINT[1] - STONE[1]) * tintM + (SAND[1] - STONE[1]) * tintS;
           const b = STONE[2] + (MINT[2] - STONE[2]) * tintM + (SAND[2] - STONE[2]) * tintS;
-          const size = 0.9 + field * 0.8 + glowM * 1.3 + glowS * 0.8 + ripple * 1.2;
+          const size = 0.9 + field * 0.8 + glowM * 1.3 + glowS * 0.8 + ripple * 1.1;
 
           ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${Math.min(0.85, energy).toFixed(3)})`;
           ctx.fillRect(x - size / 2, y - size / 2, size, size);
         }
       }
 
-      for (let k = ripples.length - 1; k >= 0; k -= 1) {
-        if (t - ripples[k].t > 1.6) ripples.splice(k, 1);
-      }
       if (!reduced) frame = requestAnimationFrame(draw);
     }
 
     function onPointer(event) {
-      const now = performance.now() / 1000;
-      if (now - lastRipple < 0.35 || ripples.length > 4) return;
-      lastRipple = now;
-      ripples.push({ x: event.clientX, y: event.clientY, t: now });
+      if (lamp.x < -9000) {
+        lamp.x = event.clientX;
+        lamp.y = event.clientY;
+      }
+      lamp.tx = event.clientX;
+      lamp.ty = event.clientY;
+      lamp.target = 1;
+    }
+    function onPointerLeave() {
+      lamp.target = 0;
     }
 
     function onVisibility() {
@@ -143,7 +143,7 @@ export default function Backdrop() {
     draw(performance.now());
     if (!reduced) {
       window.addEventListener("pointermove", onPointer, { passive: true });
-      window.addEventListener("pointerdown", onPointer, { passive: true });
+      document.documentElement.addEventListener("pointerleave", onPointerLeave);
     }
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", onVisibility);
@@ -151,7 +151,7 @@ export default function Backdrop() {
       cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointer);
-      window.removeEventListener("pointerdown", onPointer);
+      document.documentElement.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
