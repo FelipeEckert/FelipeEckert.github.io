@@ -304,7 +304,7 @@ ol, ul { padding: 0; list-style: none; }
 .stack-layer.is-active .tile { stroke: var(--stone); }
 .leader { stroke: var(--stone); stroke-width: 1; }
 .callout-dot { fill: var(--signal); }
-.callout { fill: var(--cream); font-family: var(--mono); font-size: 15px; }
+.callout { fill: var(--cream); font-family: var(--mono); font-size: 24px; }
 @media (max-width: 960px) {
   .story-visual:has(.stack-visual) { height: 40svh; }
 }

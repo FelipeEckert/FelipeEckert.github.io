@@ -120,10 +120,10 @@ function ReportLayer({ contentRef }) {
 }
 
 const LAYERS = [
-  { key: "collect", Comp: RawLayer, callouts: ["CAN and CSV test logs", "Weather station data"] },
-  { key: "validate", Comp: ValidateLayer, callouts: ["ABNT NBR 10312 checks", "Outliers flagged and removed"] },
-  { key: "analyze", Comp: AnalyzeLayer, callouts: ["pandas and NumPy", "F = f0 + f2·v²"] },
-  { key: "report", Comp: ReportLayer, callouts: ["Streamlit dashboard", "Standardized PDF report"] },
+  { key: "collect", Comp: RawLayer, callouts: ["Sensor and test logs", "External data sources"] },
+  { key: "validate", Comp: ValidateLayer, callouts: ["Automated quality checks", "Outliers removed"] },
+  { key: "analyze", Comp: AnalyzeLayer, callouts: ["Python, pandas and NumPy", "Statistical models"] },
+  { key: "report", Comp: ReportLayer, callouts: ["Interactive dashboards", "Automated reports"] },
 ];
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -180,7 +180,7 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
   return (
     <svg
       className="stack-visual"
-      viewBox="-170 -70 880 830"
+      viewBox="-250 -80 1080 850"
       role="img"
       aria-label="Layers of a data analysis workflow: raw data, validation, analysis and report"
     >
