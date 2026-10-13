@@ -242,9 +242,9 @@ ol, ul { padding: 0; list-style: none; }
 }
 .work-item header { grid-row: span 2; }
 .work-item h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3vw, 40px); line-height: 1.08; }
-.work-item h3 a { color: var(--signal); text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; transition: color 0.4s var(--ease); }
+.work-item h3 a { text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; transition: color 0.4s var(--ease); }
 .work-item h3 a svg { transition: transform 0.5s var(--ease); flex: none; }
-.work-item h3 a:hover { color: var(--cream); }
+.work-item h3 a:hover { color: var(--signal); }
 .work-item h3 a:hover svg { transform: translate(3px, -3px); }
 .work-context { margin-top: 12px; color: var(--stone); font-size: 15px; }
 .work-item dl { display: grid; gap: 18px; }
