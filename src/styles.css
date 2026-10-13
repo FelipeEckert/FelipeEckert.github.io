@@ -242,9 +242,9 @@ ol, ul { padding: 0; list-style: none; }
 }
 .work-item header { grid-row: span 2; }
 .work-item h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3vw, 40px); line-height: 1.08; }
-.work-item h3 a { text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; transition: color 0.4s var(--ease); }
+.work-item h3 a { color: var(--signal); text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; transition: color 0.4s var(--ease); }
 .work-item h3 a svg { transition: transform 0.5s var(--ease); flex: none; }
-.work-item h3 a:hover { color: var(--signal); }
+.work-item h3 a:hover { color: var(--cream); }
 .work-item h3 a:hover svg { transform: translate(3px, -3px); }
 .work-context { margin-top: 12px; color: var(--stone); font-size: 15px; }
 .work-item dl { display: grid; gap: 18px; }
@@ -272,6 +272,20 @@ ol, ul { padding: 0; list-style: none; }
 .timeline h3 { margin-top: 6px; font-size: 18px; font-weight: 500; line-height: 1.35; }
 .place { color: var(--signal); font-size: 15px; margin-top: 2px; }
 .timeline li p:last-child { margin-top: 8px; color: #c9c3b9; font-size: 15.5px; }
+
+/* publications */
+.pub-list { border-top: 1px solid var(--line); max-width: 980px; }
+.pub-list li { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--line); }
+.pub-list .when { padding-top: 6px; }
+.pub-list h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.2; }
+.pub-list h3 a { color: var(--signal); text-decoration: none; transition: color 0.4s var(--ease); }
+.pub-list h3 a svg { display: inline; vertical-align: baseline; margin-left: 6px; transition: transform 0.5s var(--ease); }
+.pub-list h3 a:hover { color: var(--cream); }
+.pub-list h3 a:hover svg { transform: translate(3px, -3px); }
+.pub-meta { margin-top: 10px; color: var(--stone); font-size: 15px; max-width: 70ch; }
+.pub-meta a { color: #c9c3b9; }
+.pub-profile { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; color: var(--cream); font-size: 15px; text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 4px; transition: border-color 0.4s var(--ease), color 0.4s var(--ease); }
+.pub-profile:hover { color: var(--signal); border-color: var(--signal); }
 
 /* contact */
 .contact { padding-bottom: clamp(80px, 12vh, 140px); }
@@ -320,6 +334,7 @@ ol, ul { padding: 0; list-style: none; }
   .result, .result + .result { padding-left: 0; border-left: 0; }
   .result + .result { border-top: 1px solid var(--line); }
   .work-item dl div, .skills div { grid-template-columns: 1fr; gap: 4px; }
+  .pub-list li { grid-template-columns: 1fr; gap: 6px; }
   .workflow li { grid-template-columns: 32px minmax(0, 1fr); }
   .livefit figcaption span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }

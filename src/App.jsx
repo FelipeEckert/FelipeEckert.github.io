@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
-import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
+import { ArrowUpRight, BookOpen, Briefcase, Code2, Download, Mail } from "lucide-react";
 import Backdrop from "./Backdrop.jsx";
 import LiveFit from "./LiveFit.jsx";
 import StackVisual from "./StackVisual.jsx";
@@ -17,6 +17,7 @@ const profile = {
   email: "felipeeckert10@gmail.com",
   linkedin: "https://www.linkedin.com/in/felipe-arthur-eckert-b745461a9",
   github: "https://github.com/FelipeEckert",
+  researchgate: "https://www.researchgate.net/profile/Felipe-Eckert-2/research",
   resume: `${import.meta.env.BASE_URL}Felipe_Eckert_Resume.pdf`,
 };
 
@@ -55,6 +56,7 @@ const work = [
     did: "Built a Python and Streamlit application that imports files from different acquisition systems, syncs them with weather-station data, applies the ABNT NBR 10312 corrections, selects the most consistent run pairs, and generates standardized reports.",
     result: "About 80% less analysis time, variability well under the standard's limit, and a paper at SIMEA 2026.",
     stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "Automated reports"],
+    link: "https://doi.org/10.5151/2357-7592-PAP126",
   },
   {
     title: "R&D Automotive Intelligence Hub",
@@ -75,11 +77,31 @@ const work = [
   },
   {
     title: "Telemetry data logger",
-    context: "Poli-USP BAJA SAE",
+    context: "Poli-USP BAJA SAE, undergraduate thesis (2023)",
     problem: "Setup decisions at competitions were based on feel more than on data.",
     did: "Co-developed a custom data logger with the electronics team and expanded its sensor channels.",
     result: "Telemetry became the basis for vehicle setup decisions across competition events.",
     stack: ["Data acquisition", "Telemetry", "Sensors"],
+    link: "https://www.researchgate.net/publication/411876977_Escola_Politecnica_da_Universidade_de_Sao_Paulo_Sistema_de_aquisicao_de_dados_para_prototipos_off_-road",
+  },
+];
+
+const publications = [
+  {
+    title:
+      "Data-Driven Coastdown Analysis: Automated Data Processing and Predictive Modeling for Vehicle Road Load and Energy Efficiency Assessment",
+    authors: "J. W. P. Silva, F. A. Eckert",
+    venue: "XXXIII SIMEA, Blucher Engineering Proceedings, vol. 13, pp. 760–768",
+    year: "2026",
+    href: "https://www.proceedings.blucher.com.br/article-details/analise-de-coastdown-orientada-por-dados-processamento-automatizado-de-dados-e-modelagem-preditiva-para-avaliacao-da-resistencia-ao-rolamento-e-da-eficiencia-energetica-de-veiculos",
+    doi: "10.5151/2357-7592-PAP126",
+  },
+  {
+    title: "Sistema de aquisição de dados para protótipos off-road (data acquisition system for off-road prototypes)",
+    authors: "F. A. Eckert",
+    venue: "Undergraduate thesis, Escola Politécnica da USP",
+    year: "2023",
+    href: "https://www.researchgate.net/publication/411876977_Escola_Politecnica_da_Universidade_de_Sao_Paulo_Sistema_de_aquisicao_de_dados_para_prototipos_off_-road",
   },
 ];
 
@@ -242,6 +264,7 @@ function Header() {
       <nav aria-label="Primary">
         <a href="#work">Work</a>
         <a href="#about">About</a>
+        <a href="#publications">Research</a>
         <a href="#contact">Contact</a>
       </nav>
     </header>
@@ -449,11 +472,51 @@ function About() {
   );
 }
 
+function Publications() {
+  return (
+    <section className="section publications" id="publications" aria-labelledby="publications-title">
+      <h2 id="publications-title">Publications</h2>
+      <ol className="pub-list">
+        {publications.map((pub) => (
+          <li key={pub.title}>
+            <p className="when">{pub.year}</p>
+            <div>
+              <h3>
+                <a href={pub.href} target="_blank" rel="noreferrer">
+                  {pub.title}
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                </a>
+              </h3>
+              <p className="pub-meta">
+                {pub.authors}. {pub.venue}.
+                {pub.doi ? (
+                  <>
+                    {" "}
+                    DOI{" "}
+                    <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
+                      {pub.doi}
+                    </a>
+                  </>
+                ) : null}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <a className="pub-profile" href={profile.researchgate} target="_blank" rel="noreferrer">
+        All research on ResearchGate
+        <ArrowUpRight size={16} aria-hidden="true" />
+      </a>
+    </section>
+  );
+}
+
 function Contact() {
   const links = [
     { label: profile.email, href: `mailto:${profile.email}`, icon: Mail },
     { label: "LinkedIn", href: profile.linkedin, icon: Briefcase },
     { label: "GitHub", href: profile.github, icon: Code2 },
+    { label: "ResearchGate", href: profile.researchgate, icon: BookOpen },
     { label: "Resume (PDF)", href: profile.resume, icon: Download },
   ];
   return (
@@ -486,6 +549,7 @@ export default function App() {
         <Workflow />
         <Work />
         <About />
+        <Publications />
         <Contact />
       </main>
       <footer className="site-footer">
