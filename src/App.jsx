@@ -5,7 +5,7 @@ import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
 import DataField from "./DataField.jsx";
-import StoryCanvas from "./StoryCanvas.jsx";
+import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -299,12 +299,14 @@ function Workflow() {
   const progressRef = useRef(0);
   const sectionRef = useRef(null);
   const [active, setActive] = useState(0);
+  const [explode, setExplode] = useState(0);
   const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   useEffect(() => {
     if (reduced) {
       progressRef.current = workflow.length;
       setActive(workflow.length - 1);
+      setExplode(1);
       return undefined;
     }
     const trigger = ScrollTrigger.create({
@@ -315,6 +317,7 @@ function Workflow() {
         const p = self.progress * workflow.length;
         progressRef.current = p;
         setActive(Math.min(workflow.length - 1, Math.floor(p)));
+        setExplode(Math.round(Math.min(1, p / 0.6) * 100) / 100);
         sectionRef.current.style.setProperty("--story", self.progress.toFixed(4));
       },
     });
@@ -326,7 +329,7 @@ function Workflow() {
       <div className="story-sticky">
         <div className="story-text">
           <h2 id="workflow-title">How I work with data</h2>
-          <p className="story-note">One real coastdown test, from raw file to decision. Keep scrolling.</p>
+          <p className="story-note">The layers behind every analysis I ship, from the raw test file to the report on someone's desk.</p>
           <ol className="story-steps">
             {workflow.map((step, index) => (
               <li key={step.title} className={index === active ? "is-active" : index < active ? "is-done" : ""}>
@@ -343,7 +346,7 @@ function Workflow() {
           </div>
         </div>
         <div className="story-visual">
-          <StoryCanvas progressRef={progressRef} />
+          <StackVisual active={active} explode={explode} />
         </div>
       </div>
     </section>
