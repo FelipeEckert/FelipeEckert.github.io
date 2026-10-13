@@ -1,773 +1,367 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Activity,
-  ArrowRight,
-  Briefcase,
-  Code2,
-  Cpu,
-  Database,
-  Download,
-  ExternalLink,
-  Gauge,
-  GraduationCap,
-  Layers,
-  Mail,
-  MapPin,
-  Wrench,
-} from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import Lenis from "lenis";
+import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
+import DataField from "./DataField.jsx";
+
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const profile = {
   name: "Felipe Arthur Eckert",
-  location: "Sao Paulo, Brazil",
-  email: "felipeeckert10@hotmail.com",
-  linkedin: "https://br.linkedin.com/in/felipe-arthur-eckert-b745461a9",
-  github: "",
-  resume: "",
+  role: "Data analyst",
+  location: "Indaiatuba, São Paulo, Brazil",
+  email: "felipeeckert10@gmail.com",
+  linkedin: "https://www.linkedin.com/in/felipe-arthur-eckert-b745461a9",
+  github: "https://github.com/FelipeEckert",
+  resume: `${import.meta.env.BASE_URL}Felipe_Eckert_Resume.pdf`,
 };
 
-const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Stack", href: "#stack" },
-  { label: "Contact", href: "#contact" },
+const results = [
+  { value: "~80%", label: "less time per road-load analysis after automating it in Python" },
+  { value: "< 5%", label: "result variability after automated validation, against a 10% limit in the standard" },
+  { value: "1st", label: "place at the Hyundai Prompt-a-thon 2026, with an AI reporting hub" },
+  { value: "2026", label: "paper published at SIMEA, the Brazilian automotive engineering symposium" },
 ];
 
-const pipelineSteps = [
+const workflow = [
   {
-    icon: Gauge,
-    label: "Vehicle / Dyno Test",
-    detail: "road and chassis dyno signals",
+    title: "Collect and validate",
+    copy: "Pull raw files from different test systems, standardize them, and check every run against clear rules before it reaches the analysis.",
   },
   {
-    icon: Database,
-    label: "CAN + CSV Logs",
-    detail: "raw measurements and test files",
+    title: "Analyze",
+    copy: "Find the trends, outliers and drivers in the data with Python, pandas and statistics, and keep the steps repeatable.",
   },
   {
-    icon: Code2,
-    label: "Python Cleaning",
-    detail: "Pandas, NumPy and validation",
-  },
-  {
-    icon: Wrench,
-    label: "Road-load Coefficients",
-    detail: "coastdown calculations",
-  },
-  {
-    icon: Activity,
-    label: "Dashboard / Report",
-    detail: "visual outputs for decisions",
+    title: "Report",
+    copy: "Turn the result into charts, dashboards and short written conclusions that engineers and managers can decide on.",
   },
 ];
 
-const pipelineOutputs = [
-  "Road-load coefficients",
-  "Run consistency checks",
-  "Dashboard-ready data",
-  "Executive summary",
-];
-
-const proofPoints = [
+const work = [
   {
-    icon: Gauge,
-    label: "Road-load automation",
-    detail: "Python tooling for coastdown coefficient calculations.",
+    title: "Coastdown analysis and reporting tool",
+    context: "Hyundai Motor Brasil, industry work (code private)",
+    problem:
+      "Vehicle coastdown tests produce large, messy datasets, and picking the valid runs used to take a lot of manual review.",
+    did: "Built a Python and Streamlit application that imports files from different acquisition systems, syncs them with weather-station data, applies the ABNT NBR 10312 corrections, selects the most consistent run pairs, and generates standardized reports.",
+    result: "About 80% less analysis time, variability well under the standard's limit, and a paper at SIMEA 2026.",
+    stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "Automated reports"],
   },
   {
-    icon: Database,
-    label: "Vehicle data pipelines",
-    detail: "Chassis dynamometer and road-test datasets with Pandas and NumPy.",
+    title: "R&D Automotive Intelligence Hub",
+    context: "Hyundai Prompt-a-thon 2026, first place as a team",
+    problem: "R&D information lived in many places, and turning it into an executive update was slow.",
+    did: "Built with R&D colleagues a Microsoft 365 Copilot solution that consolidates information from multiple sources into structured executive reports.",
+    result: "Won first place among the internal teams.",
+    stack: ["Microsoft 365 Copilot", "Generative AI", "Executive reporting"],
   },
   {
-    icon: Cpu,
-    label: "Automotive systems",
-    detail: "CAN bus, CANalyzer/CANoe, INCA Bosch ETAS and ECU calibration context.",
-  },
-];
-
-const projects = [
-  {
-    title: "Coastdown / road-load analysis tool",
-    category: "automation",
-    type: "Python tooling",
-    description:
-      "Automates road-load coefficient calculations and report preparation for coastdown analysis workflows.",
-    impact: "Reduced analysis time by about 80%.",
-    stack: ["Python", "Pandas", "NumPy", "Matplotlib"],
-    status: "Case Study",
-    link: "",
+    title: "F1 lap time prediction",
+    context: "Personal project, in progress",
+    problem: "What actually drives race pace: the circuit, the tyres, or the fuel load?",
+    did: "Collected 4,032 clean laps from five 2023 Grands Prix, explored them with per-race normalization, and set up a leave-one-race-out comparison of linear regression, random forest and XGBoost with SHAP.",
+    result: "Showed that pooled correlations hide the race effect: lap number goes from −0.06 to −0.59 once each race is normalized.",
+    stack: ["Python", "FastF1", "pandas", "scikit-learn", "XGBoost", "SHAP"],
+    link: "https://github.com/FelipeEckert/f1-laptime-prediction",
   },
   {
-    title: "Vehicle data dashboards",
-    category: "analytics",
-    type: "Data visualization",
-    description:
-      "Dashboard concepts for exploring dynamometer and road-test signals across energy, consumption and efficiency views.",
-    impact: "Built for faster technical review and clearer reporting.",
-    stack: ["Pandas", "Plotly", "Streamlit"],
-    status: "Coming Soon",
-    link: "",
-  },
-  {
-    title: "CAN bus diagnostic workflows",
-    category: "automotive",
-    type: "Automotive data",
-    description:
-      "Diagnostic and reverse-engineering workflow experience around CAN signals, ECU calibration context and vehicle development tools.",
-    impact: "Connects embedded context with analysis-ready datasets.",
-    stack: ["CAN bus", "CANoe", "CANalyzer", "INCA"],
-    status: "Case Study",
-    link: "",
-  },
-  {
-    title: "Telemetry and data logger systems",
-    category: "automotive",
-    type: "BAJA SAE",
-    description:
-      "Powertrain development work covering telemetry, data logger usage, vehicle setup, 4x4 gearbox and CVT calibration.",
-    impact: "Hands-on system ownership in a competitive engineering team.",
-    stack: ["Telemetry", "Data logger", "Powertrain"],
-    status: "Case Study",
-    link: "",
-  },
-  {
-    title: "Streamlit and Plotly analysis apps",
-    category: "analytics",
-    type: "Portfolio track",
-    description:
-      "Interactive data app track for turning technical analysis scripts into recruiter-friendly, reusable interfaces.",
-    impact: "Focused on clean UX for engineering data decisions.",
-    stack: ["Streamlit", "Plotly", "Power BI"],
-    status: "Building",
-    link: "",
+    title: "Telemetry data logger",
+    context: "Poli-USP BAJA SAE",
+    problem: "Setup decisions at competitions were based on feel more than on data.",
+    did: "Co-developed a custom data logger with the electronics team and expanded its sensor channels.",
+    result: "Telemetry became the basis for vehicle setup decisions across competition events.",
+    stack: ["Data acquisition", "Telemetry", "Sensors"],
   },
 ];
 
-const filters = [
-  { label: "All", value: "all" },
-  { label: "Analytics", value: "analytics" },
-  { label: "Automation", value: "automation" },
-  { label: "Automotive", value: "automotive" },
+const skills = [
+  { group: "Analysis", items: "Python, pandas, NumPy, statistics, data cleaning and validation" },
+  { group: "Reporting", items: "Plotly, Matplotlib, Streamlit dashboards, automated PDF and Excel reports, executive presentations" },
+  { group: "Automation and ML", items: "Python workflow automation, scikit-learn, XGBoost, SHAP, Git, Microsoft 365 Copilot" },
+  { group: "Learning now", items: "SQL, Power BI, Databricks" },
+  { group: "Domain", items: "Vehicle test data, chassis dynamometer, coastdown, CAN bus, GPS data acquisition" },
 ];
 
-const toolkitHighlights = ["Clean data", "Automate analysis", "Build dashboards"];
-
-const toolkitGroups = [
+const experience = [
   {
-    icon: Database,
-    title: "Data Processing & Analysis",
-    description: "Cleaning, structuring and analyzing messy test datasets.",
-    skills: ["Python", "Pandas", "NumPy", "SQL learning"],
-    context: "vehicle test data, CSV processing, time-series analysis, coefficient calculations",
-  },
-  {
-    icon: Wrench,
-    title: "Automation & Reporting",
-    description: "Turning repetitive engineering analyses into reusable Python workflows.",
-    skills: ["Python scripts", "Git", "GitHub", "Automated reports", "Workflow automation"],
-    context: "road-load/coastdown calculations, executive summaries, repeatable analysis pipelines",
-  },
-  {
-    icon: Activity,
-    title: "Dashboards & Visualization",
-    description: "Building interfaces and visual outputs that make technical results easier to understand.",
-    skills: ["Matplotlib", "Plotly", "Streamlit", "Plotly Dash", "Power BI in progress"],
-    context: "interactive dashboards, technical plots, report visuals",
-  },
-  {
-    icon: Cpu,
-    title: "Automotive Data Systems",
-    description: "Working close to vehicle systems, test data and calibration environments.",
-    skills: ["CAN bus", "CANalyzer", "CANoe", "INCA", "ECU calibration", "Chassis dynamometer data", "Road tests"],
-    context: "CAN reverse engineering, diagnostic procedures, powertrain and energy-efficiency analysis",
-  },
-  {
-    icon: GraduationCap,
-    title: "Engineering Foundations",
-    description: "Engineering background that helps me understand the systems behind the data.",
-    skills: ["Vehicle dynamics", "Coastdown analysis", "MATLAB/Simulink", "C++", "ARM architecture", "PCB design"],
-    context: "automotive engineering, embedded systems, telemetry and powertrain development",
-  },
-  {
-    icon: Layers,
-    title: "Current Growth",
-    description: "Areas I am actively developing to expand my data and automation profile.",
-    skills: ["SQL", "Power BI", "Scikit-learn", "Machine learning basics", "Generative AI tooling"],
-    context: "remote-oriented data analytics, AI-assisted analytics, portfolio projects",
-  },
-];
-
-const timelineItems = [
-  {
-    icon: Briefcase,
-    label: "Current",
-    title: "Junior R&D Analyst",
+    when: "2025 to now",
+    title: "Junior R&D analyst, Energy Efficiency and Data Analytics",
     place: "Hyundai Motor Brasil",
-    detail:
-      "Energy Efficiency & Data Analytics work focused on vehicle test data, automation workflows and executive-ready technical reporting.",
+    copy: "Process and validate vehicle test data, automate analysis workflows in Python, and report results to engineering and management.",
   },
   {
-    icon: GraduationCap,
-    label: "Engineering foundation",
-    title: "Electrical Engineering",
-    place: "Poli-USP",
-    detail:
-      "Automation and Control emphasis with automotive engineering specialization, connecting control systems, data and vehicle development.",
-  },
-  {
-    icon: Layers,
-    label: "Hands-on systems",
-    title: "Powertrain Director",
+    when: "2018 to 2024",
+    title: "Powertrain director, previously coordinator",
     place: "Poli-USP BAJA SAE",
-    detail:
-      "Telemetry, data logger, vehicle setup, 4x4 gearbox development and CVT calibration in a practical motorsport engineering environment.",
+    copy: "Led powertrain development, telemetry-based setup and supplier negotiations under competition deadlines.",
+  },
+  {
+    when: "2018 to 2025",
+    title: "B.S. Electrical Engineering, Automation and Control",
+    place: "Escola Politécnica da USP",
+    copy: "Specialization in automotive engineering.",
   },
 ];
 
-const focusItems = ["SQL", "Power BI", "Machine Learning", "AI-assisted analytics", "Remote-first data roles"];
-
-const contactLinks = [
-  {
-    label: "Email",
-    detail: profile.email,
-    href: `mailto:${profile.email}`,
-    icon: Mail,
-  },
-  {
-    label: "LinkedIn",
-    detail: "Felipe Arthur Eckert",
-    href: profile.linkedin,
-    icon: Briefcase,
-  },
-  {
-    label: "GitHub",
-    detail: "Profile link pending",
-    href: profile.github,
-    icon: Code2,
-  },
-];
-
-function VehicleDataCanvas() {
-  const canvasRef = useRef(null);
-
+function useMotion() {
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let width = 0;
-    let height = 0;
-    let animationFrame = 0;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return undefined;
 
-    const traces = [
-      { color: "rgba(58, 214, 176, 0.46)", amplitude: 18, speed: 0.012, y: 0.28 },
-      { color: "rgba(245, 178, 91, 0.34)", amplitude: 14, speed: 0.017, y: 0.5 },
-      { color: "rgba(196, 92, 104, 0.28)", amplitude: 12, speed: 0.021, y: 0.68 },
-    ];
+    const lenis = new Lenis({ duration: 1.1 });
+    lenis.on("scroll", ScrollTrigger.update);
+    const tick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
-    function resizeCanvas() {
-      const bounds = canvas.getBoundingClientRect();
-      const deviceScale = Math.min(window.devicePixelRatio || 1, 2);
-      width = bounds.width;
-      height = bounds.height;
-      canvas.width = Math.floor(width * deviceScale);
-      canvas.height = Math.floor(height * deviceScale);
-      ctx.setTransform(deviceScale, 0, 0, deviceScale, 0, 0);
-    }
-
-    function drawGrid() {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.045)";
-      ctx.lineWidth = 1;
-
-      for (let x = 0; x < width; x += 64) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-
-      for (let y = 0; y < height; y += 64) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
-      }
-    }
-
-    function drawTrace(trace, time) {
-      const baseline = height * trace.y;
-      ctx.beginPath();
-
-      for (let x = -20; x <= width + 20; x += 18) {
-        const waveA = Math.sin(x * 0.018 + time * trace.speed);
-        const waveB = Math.cos(x * 0.007 + time * trace.speed * 0.55);
-        const y = baseline + waveA * trace.amplitude + waveB * trace.amplitude * 0.36;
-
-        if (x === -20) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      }
-
-      ctx.strokeStyle = trace.color;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-
-    function drawDataFlow(time) {
-      const lanes = [0.23, 0.41, 0.59, 0.74];
-
-      lanes.forEach((lane, laneIndex) => {
-        const y = height * lane;
-        ctx.strokeStyle = "rgba(58, 214, 176, 0.11)";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(width * 0.42, y);
-        ctx.lineTo(width * 0.96, y);
-        ctx.stroke();
-
-        for (let index = 0; index < 4; index += 1) {
-          const progress = ((time * 0.00009 * (laneIndex + 1) + index / 4) % 1);
-          const x = width * (0.42 + progress * 0.54);
-          ctx.beginPath();
-          ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-          ctx.fillStyle = laneIndex % 2 === 0 ? "rgba(58, 214, 176, 0.7)" : "rgba(245, 178, 91, 0.55)";
-          ctx.fill();
-        }
+    const ctx = gsap.context(() => {
+      document.fonts.ready.then(() => {
+        const split = SplitText.create(".hero h1", { type: "lines", mask: "lines" });
+        gsap.from(split.lines, {
+          yPercent: 110,
+          duration: 1.1,
+          ease: "expo.out",
+          stagger: 0.09,
+          delay: 0.15,
+        });
+        gsap.from(".hero-sub, .hero-actions", {
+          opacity: 0,
+          y: 12,
+          duration: 0.9,
+          ease: "power3.out",
+          delay: 0.65,
+          stagger: 0.08,
+        });
       });
-    }
 
-    function drawSystemNodes(time) {
-      const nodes = [
-        { x: 0.55, y: 0.18 },
-        { x: 0.7, y: 0.33 },
-        { x: 0.83, y: 0.53 },
-        { x: 0.61, y: 0.72 },
-        { x: 0.9, y: 0.79 },
-      ];
-
-      nodes.forEach((node, index) => {
-        const pulse = Math.sin(time * 0.003 + index) * 0.5 + 0.5;
-        const x = width * node.x;
-        const y = height * node.y;
-        ctx.beginPath();
-        ctx.arc(x, y, 4 + pulse * 2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(58, 214, 176, 0.16)";
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(216, 239, 232, 0.72)";
-        ctx.fill();
-      });
-    }
-
-    function draw(time) {
-      ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "#090b10";
-      ctx.fillRect(0, 0, width, height);
-      drawGrid();
-      traces.forEach((trace) => drawTrace(trace, time));
-      drawDataFlow(time);
-      drawSystemNodes(time);
-
-      if (!prefersReducedMotion) {
-        animationFrame = requestAnimationFrame(draw);
-      }
-    }
-
-    resizeCanvas();
-    draw(0);
-
-    if (!prefersReducedMotion) {
-      animationFrame = requestAnimationFrame(draw);
-    }
-
-    window.addEventListener("resize", resizeCanvas);
+      gsap.fromTo(
+        ".workflow-rail span",
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          scrollTrigger: { trigger: ".workflow", start: "top 70%", end: "bottom 60%", scrub: true },
+        },
+      );
+    });
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animationFrame);
+      ctx.revert();
+      gsap.ticker.remove(tick);
+      lenis.destroy();
     };
   }, []);
-
-  return <canvas ref={canvasRef} className="vehicle-data-canvas" aria-hidden="true" />;
-}
-
-function SectionHeading({ kicker, title, copy }) {
-  return (
-    <div className="section-heading">
-      <p className="section-kicker">{kicker}</p>
-      <h2>{title}</h2>
-      {copy ? <p>{copy}</p> : null}
-    </div>
-  );
 }
 
 function Header() {
   return (
     <header className="site-header">
-      <a className="brand" href="#top" aria-label="Felipe Arthur Eckert home">
-        <span>FAE</span>
+      <a className="brand" href="#top">
+        Felipe Eckert
       </a>
-      <nav className="nav-links" aria-label="Primary navigation">
-        {navItems.map((item) => (
-          <a key={item.href} href={item.href}>
-            {item.label}
-          </a>
-        ))}
+      <nav aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
       </nav>
     </header>
   );
 }
 
-function HeroVisual() {
+function Hero() {
   return (
-    <aside className="hero-visual" aria-label="Vehicle data pipeline from tests to reports">
-      <div className="pipeline-topbar">
-        <div>
-          <span className="pipeline-kicker">Vehicle Data Pipeline</span>
-          <strong>From test data to actionable reports</strong>
-        </div>
-        <span className="pipeline-badge">~80% faster road-load analysis</span>
-      </div>
-      <div className="pipeline-flow">
-        {pipelineSteps.map((step, index) => {
-          const Icon = step.icon;
-          return (
-            <div className="pipeline-step" key={step.label}>
-              <span className="pipeline-step-icon">
-                <Icon className="pipeline-step-svg" size={18} strokeWidth={2} aria-hidden="true" />
-              </span>
-              <div>
-                <strong>{step.label}</strong>
-                <span>{step.detail}</span>
-              </div>
-              {index < pipelineSteps.length - 1 ? <span className="pipeline-connector" aria-hidden="true" /> : null}
-            </div>
-          );
-        })}
-      </div>
-      <div className="pipeline-output">
-        <p>Useful outputs</p>
-        <div>
-          {pipelineOutputs.map((output) => (
-            <span key={output}>{output}</span>
-          ))}
+    <section className="hero" id="top" aria-labelledby="hero-title">
+      <div className="hero-text">
+        <p className="hero-kicker">
+          {profile.role} in {profile.location}
+        </p>
+        <h1 id="hero-title">I turn raw engineering data into reports people act on.</h1>
+        <p className="hero-sub">
+          At Hyundai Motor Brasil's R&D team I validate vehicle test data, automate the analysis in Python, and deliver
+          the results as dashboards and reports. Open to hybrid and remote data analyst roles.
+        </p>
+        <div className="hero-actions">
+          <a className="btn btn-primary" href="#work">
+            See my work
+          </a>
+          <a className="btn" href={profile.resume} download>
+            <Download size={16} aria-hidden="true" />
+            Download resume
+          </a>
         </div>
       </div>
-      <div className="pipeline-stack" aria-label="Pipeline stack">
-        {["Python", "Pandas", "NumPy", "Plotly", "Streamlit", "CAN data"].map((tool) => (
-          <span key={tool}>{tool}</span>
-        ))}
-      </div>
-    </aside>
+      <DataField />
+    </section>
   );
 }
 
-function Hero() {
+function Results() {
   return (
-    <section className="hero" aria-labelledby="hero-title">
-      <VehicleDataCanvas />
-      <div className="hero-overlay" />
-      <div className="hero-layout">
-        <div className="hero-content">
-          <p className="eyebrow">
-            <MapPin size={15} aria-hidden="true" />
-            {profile.location}
-          </p>
-          <h1 id="hero-title">Turning complex vehicle data into Python-powered tools.</h1>
-          <p className="hero-headline">
-            Data Analyst & Automation Engineer bridging automotive R&D, data analytics and automation.
-          </p>
-          <p className="hero-copy">
-            I combine automotive engineering context, real vehicle test data and practical Python tooling to
-            make technical analysis faster, clearer and easier to repeat.
-          </p>
-          <div className="hero-actions" aria-label="Primary actions">
-            <a className="button button-primary" href="#projects">
-              View Projects
-              <ArrowRight size={18} aria-hidden="true" />
-            </a>
-            <a className="button button-secondary" href="#contact">
-              Contact Me
-              <Mail size={18} aria-hidden="true" />
-            </a>
-            {profile.resume ? (
-              <a className="button button-ghost" href={profile.resume}>
-                Download Resume
-                <Download size={18} aria-hidden="true" />
-              </a>
-            ) : null}
-          </div>
+    <section className="results" aria-label="Results">
+      {results.map((item) => (
+        <div className="result" key={item.label}>
+          <p className="result-value">{item.value}</p>
+          <p className="result-label">{item.label}</p>
         </div>
-        <HeroVisual />
+      ))}
+    </section>
+  );
+}
+
+function Workflow() {
+  return (
+    <section className="section workflow" aria-labelledby="workflow-title">
+      <h2 id="workflow-title">How I work with data</h2>
+      <div className="workflow-body">
+        <div className="workflow-rail" aria-hidden="true">
+          <span />
+        </div>
+        <ol>
+          {workflow.map((step, index) => (
+            <li key={step.title}>
+              <span className="step-index">{index + 1}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-function ProofStrip() {
+function Work() {
   return (
-    <section className="proof-strip" aria-label="Professional highlights">
-      {proofPoints.map((point) => {
-        const Icon = point.icon;
-        return (
-          <article className="proof-item" key={point.label}>
-            <Icon size={22} aria-hidden="true" />
-            <div>
-              <h3>{point.label}</h3>
-              <p>{point.detail}</p>
-            </div>
+    <section className="section" id="work" aria-labelledby="work-title">
+      <h2 id="work-title">Selected work</h2>
+      <div className="work-list">
+        {work.map((item) => (
+          <article className="work-item" key={item.title}>
+            <header>
+              <h3>
+                {item.link ? (
+                  <a href={item.link} target="_blank" rel="noreferrer">
+                    {item.title}
+                    <ArrowUpRight size={20} aria-hidden="true" />
+                  </a>
+                ) : (
+                  item.title
+                )}
+              </h3>
+              <p className="work-context">{item.context}</p>
+            </header>
+            <dl>
+              <div>
+                <dt>Problem</dt>
+                <dd>{item.problem}</dd>
+              </div>
+              <div>
+                <dt>What I did</dt>
+                <dd>{item.did}</dd>
+              </div>
+              <div>
+                <dt>Result</dt>
+                <dd>{item.result}</dd>
+              </div>
+            </dl>
+            <ul className="stack" aria-label={`${item.title} tools`}>
+              {item.stack.map((tool) => (
+                <li key={tool}>{tool}</li>
+              ))}
+            </ul>
           </article>
-        );
-      })}
+        ))}
+      </div>
     </section>
   );
 }
 
 function About() {
   return (
-    <section className="section about-section" id="about" aria-labelledby="about-title">
-      <div className="section-heading">
-        <p className="section-kicker">About</p>
-        <h2 id="about-title">Automotive engineering became the place where data work felt obvious.</h2>
-      </div>
-      <div className="about-copy">
-        <p>
-          My background is Electrical Engineering at Poli-USP, with an emphasis on Automation and Control and
-          specialization in Automotive Engineering. That foundation made me comfortable with systems,
-          instrumentation and the details behind vehicle behavior.
-        </p>
-        <p>
-          In R&D, I saw the same pattern repeatedly: valuable measurements were available, but the path from raw
-          test data to decisions was still too manual. That is where Python, Pandas and visualization became a
-          natural extension of the engineering work.
-        </p>
-        <p>
-          The advantage I bring is domain translation. I understand the vehicle development context and can also
-          build the data layer that turns technical measurements into reusable analysis tools, dashboards and
-          reports.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-function Projects() {
-  const [activeFilter, setActiveFilter] = useState("all");
-
-  const filteredProjects = useMemo(() => {
-    if (activeFilter === "all") {
-      return projects;
-    }
-
-    return projects.filter((project) => project.category === activeFilter);
-  }, [activeFilter]);
-
-  return (
-    <section className="section" id="projects" aria-labelledby="projects-title">
-      <div className="section-row">
-        <SectionHeading
-          kicker="Featured Projects"
-          title="Case studies and portfolio tracks"
-          copy="A focused set of work themes around automotive data, automation and practical analytics interfaces."
-        />
-        <div className="filter-controls" aria-label="Filter featured projects">
-          {filters.map((filter) => (
-            <button
-              aria-pressed={filter.value === activeFilter}
-              className={filter.value === activeFilter ? "filter-button is-active" : "filter-button"}
-              key={filter.value}
-              type="button"
-              onClick={() => setActiveFilter(filter.value)}
-            >
-              {filter.label}
-            </button>
-          ))}
+    <section className="section about" id="about" aria-labelledby="about-title">
+      <h2 id="about-title">About</h2>
+      <div className="about-grid">
+        <div className="about-copy">
+          <p>
+            I'm an electrical engineer from Poli-USP who ended up doing the part of engineering I like most: making
+            sense of the data. In R&D I kept seeing valuable measurements stuck behind manual spreadsheets, so I started
+            building the Python tools, checks and reports that get them to a decision faster.
+          </p>
+          <p>
+            That background means I understand where the data comes from and what can go wrong with it. I'm now
+            focused on analytics roles, and building my SQL and BI skills on top of a strong Python base. I work
+            comfortably in English, Portuguese and Spanish.
+          </p>
+          <dl className="skills">
+            {skills.map((skill) => (
+              <div key={skill.group}>
+                <dt>{skill.group}</dt>
+                <dd>{skill.items}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-      </div>
-      <div className="project-grid">
-        {filteredProjects.map((project) => (
-          <article className="project-card" key={project.title}>
-            <div className="project-card-top">
-              <p className="project-type">{project.type}</p>
-              <span className="status-pill">{project.status}</span>
-            </div>
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="impact-row">
-              <Gauge size={18} aria-hidden="true" />
-              <span>{project.impact}</span>
-            </div>
-            <div className="tag-list" aria-label={`${project.title} stack`}>
-              {project.stack.map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
-            {project.link ? (
-              <a className="project-link" href={project.link}>
-                Open project
-                <ExternalLink size={16} aria-hidden="true" />
-              </a>
-            ) : null}
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Skills() {
-  return (
-    <section className="section toolkit-section" id="stack" aria-labelledby="stack-title">
-      <SectionHeading
-        kicker="Technical Toolkit"
-        title="How I turn raw technical data into useful tools"
-        copy="A practical toolkit organized around the problems I solve: cleaning vehicle data, automating engineering analysis and making results easier to understand."
-      />
-      <div className="toolkit-capabilities" aria-label="Core capabilities">
-        {toolkitHighlights.map((highlight) => (
-          <span key={highlight}>{highlight}</span>
-        ))}
-      </div>
-      <div className="toolkit-grid">
-        {toolkitGroups.map((group) => {
-          const Icon = group.icon;
-          return (
-            <article className="toolkit-card" key={group.title}>
-              <div className="toolkit-card-header">
-                <span className="toolkit-icon">
-                  <Icon size={20} aria-hidden="true" />
-                </span>
-                <div>
-                  <h3>{group.title}</h3>
-                  <p>{group.description}</p>
-                </div>
-              </div>
-              <div className="skill-pill-list" aria-label={`${group.title} skills`}>
-                {group.skills.map((skill) => (
-                  <span className="skill-pill" key={skill}>
-                    {skill}
-                  </span>
-                ))}
-              </div>
-              <p className="applied-line">
-                <span>Applied to:</span> {group.context}
-              </p>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Experience() {
-  return (
-    <section className="section experience-section" id="experience" aria-labelledby="experience-title">
-      <SectionHeading
-        kicker="Experience"
-        title="R&D, data workflows and hands-on automotive systems"
-        copy="A timeline of the technical context behind the portfolio, kept intentionally honest and focused."
-      />
-      <div className="timeline">
-        {timelineItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <article className="timeline-item" key={`${item.title}-${item.place}`}>
-              <div className="timeline-marker">
-                <Icon size={20} aria-hidden="true" />
-              </div>
-              <div className="timeline-content">
-                <p className="timeline-label">{item.label}</p>
-                <h3>{item.title}</h3>
-                <p className="timeline-place">{item.place}</p>
-                <p>{item.detail}</p>
-              </div>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function Focus() {
-  return (
-    <section className="focus-band" aria-labelledby="focus-title">
-      <div>
-        <p className="section-kicker">Current Focus</p>
-        <h2 id="focus-title">Deepening the analytics layer around technical data.</h2>
-      </div>
-      <div className="focus-list" aria-label="Current focus areas">
-        {focusItems.map((item) => (
-          <span key={item}>{item}</span>
-        ))}
+        <ol className="timeline">
+          {experience.map((item) => (
+            <li key={item.title}>
+              <p className="when">{item.when}</p>
+              <h3>{item.title}</h3>
+              <p className="place">{item.place}</p>
+              <p>{item.copy}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
 function Contact() {
+  const links = [
+    { label: profile.email, href: `mailto:${profile.email}`, icon: Mail },
+    { label: "LinkedIn", href: profile.linkedin, icon: Briefcase },
+    { label: "GitHub", href: profile.github, icon: Code2 },
+    { label: "Resume (PDF)", href: profile.resume, icon: Download },
+  ];
   return (
-    <section className="section contact-section" id="contact" aria-labelledby="contact-title">
-      <div>
-        <p className="section-kicker">Contact</p>
-        <h2 id="contact-title">Let's build something useful from complex data.</h2>
-        <p>
-          I am interested in remote and hybrid opportunities across Data Analytics, Automation Engineering and
-          Python tooling, especially where engineering domain knowledge matters.
-        </p>
-      </div>
-      <div className="contact-links">
-        {contactLinks.map((link) => {
-          const Icon = link.icon;
-          const content = (
-            <>
-              <span className="contact-icon">
-                <Icon size={20} aria-hidden="true" />
-              </span>
-              <span>
-                <strong>{link.label}</strong>
-                <small>{link.detail}</small>
-              </span>
-              {link.href ? <ExternalLink size={16} aria-hidden="true" /> : null}
-            </>
-          );
-
-          return link.href ? (
-            <a className="contact-link" href={link.href} key={link.label}>
-              {content}
+    <section className="section contact" id="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Looking for a data analyst who understands where the data comes from?</h2>
+      <p>I'm open to hybrid roles around Campinas and São Paulo, and to remote roles in Brazil or abroad.</p>
+      <ul>
+        {links.map(({ label, href, icon: Icon }) => (
+          <li key={label}>
+            <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
+              <Icon size={18} aria-hidden="true" />
+              {label}
             </a>
-          ) : (
-            <span className="contact-link is-disabled" key={link.label} aria-disabled="true">
-              {content}
-            </span>
-          );
-        })}
-      </div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
 
 export default function App() {
+  useMotion();
   return (
     <>
       <Header />
-      <main id="top">
+      <main>
         <Hero />
-        <ProofStrip />
+        <Results />
+        <Workflow />
+        <Work />
         <About />
-        <Projects />
-        <Skills />
-        <Experience />
-        <Focus />
         <Contact />
       </main>
       <footer className="site-footer">
         <span>{profile.name}</span>
-        <span>Data Analyst & Automation Engineer</span>
+        <span>Built with React, GSAP and a little coastdown data</span>
       </footer>
     </>
   );
