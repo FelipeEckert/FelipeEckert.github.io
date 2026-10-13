@@ -10,6 +10,7 @@
   --mono: "Geist Mono", ui-monospace, "SFMono-Regular", monospace;
   --gutter: clamp(20px, 5vw, 72px);
   --ease: cubic-bezier(0.65, 0.05, 0, 1);
+  --header: 72px;
   color-scheme: dark;
 }
 
@@ -35,6 +36,17 @@ ol, ul { padding: 0; list-style: none; }
 
 :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 2px; }
 
+/* backdrop: drifting contour field + film grain */
+.backdrop { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* header */
 .site-header {
   position: sticky;
@@ -43,12 +55,13 @@ ol, ul { padding: 0; list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px var(--gutter);
-  background: rgba(12, 12, 11, 0.82);
+  height: var(--header);
+  padding: 0 var(--gutter);
+  background: rgba(12, 12, 11, 0.72);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
-.brand { font-family: var(--serif); font-size: 24px; text-decoration: none; line-height: 1; }
+.brand { font-family: var(--serif); font-size: 34px; letter-spacing: 0.005em; text-decoration: none; line-height: 1; }
 .site-header nav { display: flex; gap: 28px; }
 .site-header nav a { color: var(--stone); text-decoration: none; font-size: 15px; transition: color 0.3s var(--ease); }
 .site-header nav a:hover { color: var(--cream); }
@@ -59,7 +72,7 @@ ol, ul { padding: 0; list-style: none; }
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
   gap: clamp(24px, 4vw, 64px);
   align-items: center;
-  min-height: calc(100svh - 64px);
+  min-height: calc(100svh - var(--header));
   padding: clamp(40px, 8vh, 96px) var(--gutter) 48px;
 }
 .hero-kicker { color: var(--stone); font-size: 15px; margin-bottom: 28px; }
@@ -131,8 +144,8 @@ ol, ul { padding: 0; list-style: none; }
 .story { position: relative; height: 420vh; margin-top: clamp(80px, 12vh, 140px); border-top: 1px solid var(--line); }
 .story-sticky {
   position: sticky;
-  top: 61px;
-  height: calc(100svh - 61px);
+  top: var(--header);
+  height: calc(100svh - var(--header));
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: clamp(24px, 4vw, 64px);
@@ -266,6 +279,8 @@ ol, ul { padding: 0; list-style: none; }
   .stack { grid-column: 1; }
 }
 @media (max-width: 560px) {
+  :root { --header: 62px; }
+  .brand { font-size: 27px; }
   body { font-size: 16px; }
   .site-header nav { gap: 18px; }
   .results { grid-template-columns: 1fr; }

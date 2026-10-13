@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import Lenis from "lenis";
 import { ArrowUpRight, Briefcase, Code2, Download, Mail } from "lucide-react";
+import Backdrop from "./Backdrop.jsx";
 import DataField from "./DataField.jsx";
 import StackVisual from "./StackVisual.jsx";
 
@@ -477,6 +478,7 @@ export default function App() {
   useMotion();
   return (
     <>
+      <Backdrop />
       <Header />
       <main>
         <Hero />
