@@ -299,14 +299,13 @@ function Workflow() {
   const progressRef = useRef(0);
   const sectionRef = useRef(null);
   const [active, setActive] = useState(0);
-  const [explode, setExplode] = useState(0);
+  const enterRef = useRef(0);
   const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   useEffect(() => {
     if (reduced) {
       progressRef.current = workflow.length;
       setActive(workflow.length - 1);
-      setExplode(1);
       return undefined;
     }
     const trigger = ScrollTrigger.create({
@@ -317,11 +316,21 @@ function Workflow() {
         const p = self.progress * workflow.length;
         progressRef.current = p;
         setActive(Math.min(workflow.length - 1, Math.floor(p)));
-        setExplode(Math.round(Math.min(1, p / 0.6) * 100) / 100);
         sectionRef.current.style.setProperty("--story", self.progress.toFixed(4));
       },
     });
-    return () => trigger.kill();
+    const enter = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: "top 90%",
+      end: "top top",
+      onUpdate: (self) => {
+        enterRef.current = self.progress;
+      },
+    });
+    return () => {
+      trigger.kill();
+      enter.kill();
+    };
   }, [reduced]);
 
   return (
@@ -346,7 +355,7 @@ function Workflow() {
           </div>
         </div>
         <div className="story-visual">
-          <StackVisual active={active} explode={explode} />
+          <StackVisual progressRef={progressRef} enterRef={enterRef} steps={workflow.length} />
         </div>
       </div>
     </section>
