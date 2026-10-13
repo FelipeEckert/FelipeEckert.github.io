@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 // - A fine grid of dots whose brightness drifts with a slow noise field.
 // - Two soft "lights" (mint and warm sand) wander across the page and tint the
 //   dots they pass over, so the matrix reads as a gradient, not flat grey.
-// - A slow diagonal wave sweeps through every few seconds, like a scan.
-// - A few faint streaks drift left to right, like flow over a car body.
+// - Waves of light travel through the dots from left to right, bent slightly
+//   by the noise field, like a scan or air flowing over a body.
 // - The pointer acts as a soft lamp that warms nearby dots; scrolling shifts the grid slightly
 //   slower than the content for depth.
 // Everything stays very faint; reduced-motion users get one static frame.
@@ -52,7 +52,6 @@ export default function Backdrop() {
     const ctx = canvas.getContext("2d");
     const noise = makeNoise();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const flow = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), trail: [], life: Math.random() }));
     const lamp = { x: -9999, y: -9999, tx: -9999, ty: -9999, power: 0, target: 0 };
     let width = 0;
     let height = 0;
@@ -88,8 +87,6 @@ export default function Backdrop() {
       const [sx, sy] = light(t, 0.037, 2.6);
       const reachM = Math.max(width, height) * 0.45;
       const reachS = Math.max(width, height) * 0.4;
-      const diag = width + height;
-      const sweepPos = ((t * 0.09) % 1.6) * diag - diag * 0.3;
 
       for (let row = -1; row * GAP < height + GAP; row += 1) {
         const y = row * GAP + offY + GAP / 2;
@@ -99,54 +96,25 @@ export default function Backdrop() {
           const field = noise(col * 0.07 + t * 0.04, (row + rowShift) * 0.07 - t * 0.03) * 0.5 + 0.5;
           const glowM = Math.max(0, 1 - Math.hypot(x - mx, y - my) / reachM) ** 2;
           const glowS = Math.max(0, 1 - Math.hypot(x - sx, y - sy) / reachS) ** 2;
-          const sweep = Math.exp(-(((x + y - sweepPos) / 120) ** 2)) * 0.6;
+          const bend = noise(y * 0.0035 + 7.1, t * 0.08) * 2.4;
+          const sweep = Math.max(0, Math.sin(x * 0.0105 - t * 0.85 + bend)) ** 10 * 0.75;
 
           const lampDist = Math.hypot(x - lamp.x, y - lamp.y);
           const ripple = lamp.power * Math.max(0, 1 - lampDist / 190) ** 2;
 
           const vignette = 1 - 0.55 * ((x / width - 0.5) ** 2 + (y / height - 0.5) ** 2) * 2.2;
-          const energy = (0.07 + field * 0.13 + glowM * 0.5 + glowS * 0.38 + sweep * 0.22 + ripple * 0.45) * vignette;
+          const energy = (0.07 + field * 0.13 + glowM * 0.5 + glowS * 0.38 + sweep * 0.42 + ripple * 0.45) * vignette;
           if (energy < 0.03) continue;
 
-          const tintM = Math.min(1, glowM * 1.4 + ripple * 0.9 + sweep * 0.3);
+          const tintM = Math.min(1, glowM * 1.4 + ripple * 0.9 + sweep * 0.55);
           const tintS = Math.min(1 - tintM, glowS * 1.2);
           const r = STONE[0] + (MINT[0] - STONE[0]) * tintM + (SAND[0] - STONE[0]) * tintS;
           const g = STONE[1] + (MINT[1] - STONE[1]) * tintM + (SAND[1] - STONE[1]) * tintS;
           const b = STONE[2] + (MINT[2] - STONE[2]) * tintM + (SAND[2] - STONE[2]) * tintS;
-          const size = 0.75 + field * 0.6 + glowM * 1.05 + glowS * 0.65 + ripple * 0.95;
+          const size = 0.75 + field * 0.6 + glowM * 1.05 + glowS * 0.65 + sweep * 0.5 + ripple * 0.95;
 
           ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${Math.min(0.85, energy).toFixed(3)})`;
           ctx.fillRect(x - size / 2, y - size / 2, size, size);
-        }
-      }
-
-      // faint left-to-right flow, like air over a body or data moving through a pipeline
-      ctx.lineWidth = 1;
-      for (let i = 0; i < flow.length; i += 1) {
-        const f = flow[i];
-        const px = f.x * width;
-        const py = f.y * height;
-        const angle = noise(px * 0.0022 + t * 0.03, py * 0.0022) * 1.1;
-        f.x += (Math.cos(angle) * 0.9 + 0.55) / width;
-        f.y += (Math.sin(angle) * 0.6) / height;
-        f.life = Math.min(1, f.life + 0.006);
-        f.trail.push([f.x * width, f.y * height]);
-        if (f.trail.length > 26) f.trail.shift();
-        if (f.x > 1.02 || f.y < -0.02 || f.y > 1.02) {
-          f.x = -0.02;
-          f.y = Math.random();
-          f.trail = [];
-          f.life = 0;
-        }
-        if (f.trail.length < 2) continue;
-        const tint = i % 6 === 0 ? MINT : STONE;
-        for (let k = 1; k < f.trail.length; k += 1) {
-          const a = (k / f.trail.length) * 0.16 * f.life;
-          ctx.strokeStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${a.toFixed(3)})`;
-          ctx.beginPath();
-          ctx.moveTo(f.trail[k - 1][0], f.trail[k - 1][1]);
-          ctx.lineTo(f.trail[k][0], f.trail[k][1]);
-          ctx.stroke();
         }
       }
 
