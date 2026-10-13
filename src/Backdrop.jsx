@@ -1,14 +1,20 @@
 import { useEffect, useRef } from "react";
 
-// Page backdrop: faint contour lines of a slowly drifting 2D field, like a
-// contour plot that never quite settles. Drawn with marching squares on a
-// coarse grid, throttled, and frozen when the user prefers reduced motion.
+// Living dot-matrix backdrop.
+// - A fine grid of dots whose brightness drifts with a slow noise field.
+// - Two soft "lights" (mint and warm sand) wander across the page and tint the
+//   dots they pass over, so the matrix reads as a gradient, not flat grey.
+// - A slow diagonal wave sweeps through every few seconds, like a scan.
+// - The pointer leaves expanding ripples; scrolling shifts the grid slightly
+//   slower than the content for depth.
+// Everything stays very faint; reduced-motion users get one static frame.
 
-const LEVELS = [-0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45];
-const CELL = 22;
-const FPS = 60;
+const GAP = 18;
+const MINT = [133, 237, 165];
+const SAND = [214, 176, 122];
+const STONE = [149, 144, 137];
 
-function makeNoise(seed = 7) {
+function makeNoise(seed = 11) {
   const perm = new Uint8Array(512);
   const p = Array.from({ length: 256 }, (_, i) => i);
   let s = seed;
@@ -45,111 +51,107 @@ export default function Backdrop() {
     const ctx = canvas.getContext("2d");
     const noise = makeNoise();
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let cols = 0;
-    let rows = 0;
-    let field = new Float32Array(0);
+    const ripples = [];
     let width = 0;
     let height = 0;
     let frame = 0;
-    let last = 0;
+    let lastRipple = 0;
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cols = Math.ceil(width / CELL) + 1;
-      rows = Math.ceil(height / CELL) + 1;
-      field = new Float32Array(cols * rows);
     }
 
-    function sample(t) {
-      const scale = 0.0016;
-      for (let r = 0; r < rows; r += 1) {
-        for (let c = 0; c < cols; c += 1) {
-          const x = c * CELL * scale;
-          const y = r * CELL * scale;
-          field[r * cols + c] = noise(x + t * 0.022, y - t * 0.014) + 0.5 * noise(x * 2.1 - t * 0.018, y * 2.1 + 3.7);
-        }
-      }
+    function light(t, speed, phase) {
+      return [
+        width * (0.5 + 0.42 * Math.sin(t * speed + phase)),
+        height * (0.5 + 0.38 * Math.sin(t * speed * 1.37 + phase * 2.1)),
+      ];
     }
 
-    function edge(a, b, level) {
-      return (level - a) / (b - a);
-    }
-
-    function contours() {
+    function draw(ms) {
+      const t = ms / 1000;
       ctx.clearRect(0, 0, width, height);
-      ctx.lineWidth = 1;
-      LEVELS.forEach((level, li) => {
-        const major = li === 3;
-        ctx.strokeStyle = major ? "rgba(133, 237, 165, 0.07)" : "rgba(149, 144, 137, 0.075)";
-        ctx.beginPath();
-        for (let r = 0; r < rows - 1; r += 1) {
-          for (let c = 0; c < cols - 1; c += 1) {
-            const tl = field[r * cols + c];
-            const tr = field[r * cols + c + 1];
-            const br = field[(r + 1) * cols + c + 1];
-            const bl = field[(r + 1) * cols + c];
-            const idx = (tl > level ? 8 : 0) | (tr > level ? 4 : 0) | (br > level ? 2 : 0) | (bl > level ? 1 : 0);
-            if (idx === 0 || idx === 15) continue;
-            const x = c * CELL;
-            const y = r * CELL;
-            const top = [x + edge(tl, tr, level) * CELL, y];
-            const right = [x + CELL, y + edge(tr, br, level) * CELL];
-            const bottom = [x + edge(bl, br, level) * CELL, y + CELL];
-            const left = [x, y + edge(tl, bl, level) * CELL];
-            const seg = (a, b) => {
-              ctx.moveTo(a[0], a[1]);
-              ctx.lineTo(b[0], b[1]);
-            };
-            switch (idx) {
-              case 1: case 14: seg(left, bottom); break;
-              case 2: case 13: seg(bottom, right); break;
-              case 3: case 12: seg(left, right); break;
-              case 4: case 11: seg(top, right); break;
-              case 5: seg(left, top); seg(bottom, right); break;
-              case 6: case 9: seg(top, bottom); break;
-              case 7: case 8: seg(left, top); break;
-              case 10: seg(left, bottom); seg(top, right); break;
-              default: break;
-            }
+
+      const scroll = window.scrollY * 0.12;
+      const offY = -(scroll % GAP);
+      const rowShift = Math.floor(scroll / GAP);
+      const [mx, my] = light(t, 0.05, 0.4);
+      const [sx, sy] = light(t, 0.037, 2.6);
+      const reachM = Math.max(width, height) * 0.45;
+      const reachS = Math.max(width, height) * 0.4;
+      const diag = width + height;
+      const sweepPos = ((t * 0.09) % 1.6) * diag - diag * 0.3;
+
+      for (let row = -1; row * GAP < height + GAP; row += 1) {
+        const y = row * GAP + offY + GAP / 2;
+        for (let col = 0; col * GAP < width + GAP; col += 1) {
+          const x = col * GAP + GAP / 2;
+
+          const field = noise(col * 0.07 + t * 0.04, (row + rowShift) * 0.07 - t * 0.03) * 0.5 + 0.5;
+          const glowM = Math.max(0, 1 - Math.hypot(x - mx, y - my) / reachM) ** 2;
+          const glowS = Math.max(0, 1 - Math.hypot(x - sx, y - sy) / reachS) ** 2;
+          const sweep = Math.exp(-(((x + y - sweepPos) / 120) ** 2)) * 0.6;
+
+          let ripple = 0;
+          for (let k = 0; k < ripples.length; k += 1) {
+            const rp = ripples[k];
+            const age = t - rp.t;
+            const ring = Math.abs(Math.hypot(x - rp.x, y - rp.y) - age * 220);
+            ripple += Math.max(0, 1 - ring / 26) * Math.max(0, 1 - age / 1.6);
           }
+
+          const vignette = 1 - 0.55 * ((x / width - 0.5) ** 2 + (y / height - 0.5) ** 2) * 2.2;
+          const energy = (0.07 + field * 0.13 + glowM * 0.5 + glowS * 0.38 + sweep * 0.22 + ripple * 0.5) * vignette;
+          if (energy < 0.03) continue;
+
+          const tintM = Math.min(1, glowM * 1.4 + ripple * 0.8 + sweep * 0.3);
+          const tintS = Math.min(1 - tintM, glowS * 1.2);
+          const r = STONE[0] + (MINT[0] - STONE[0]) * tintM + (SAND[0] - STONE[0]) * tintS;
+          const g = STONE[1] + (MINT[1] - STONE[1]) * tintM + (SAND[1] - STONE[1]) * tintS;
+          const b = STONE[2] + (MINT[2] - STONE[2]) * tintM + (SAND[2] - STONE[2]) * tintS;
+          const size = 0.9 + field * 0.8 + glowM * 1.3 + glowS * 0.8 + ripple * 1.2;
+
+          ctx.fillStyle = `rgba(${r | 0},${g | 0},${b | 0},${Math.min(0.85, energy).toFixed(3)})`;
+          ctx.fillRect(x - size / 2, y - size / 2, size, size);
         }
-        ctx.stroke();
-      });
+      }
+
+      for (let k = ripples.length - 1; k >= 0; k -= 1) {
+        if (t - ripples[k].t > 1.6) ripples.splice(k, 1);
+      }
+      if (!reduced) frame = requestAnimationFrame(draw);
     }
 
-    function loop(now) {
-      if (now - last > 1000 / FPS) {
-        last = now;
-        sample(now / 1000);
-        contours();
-      }
-      frame = requestAnimationFrame(loop);
+    function onPointer(event) {
+      const now = performance.now() / 1000;
+      if (now - lastRipple < 0.35 || ripples.length > 4) return;
+      lastRipple = now;
+      ripples.push({ x: event.clientX, y: event.clientY, t: now });
     }
 
     function onVisibility() {
       cancelAnimationFrame(frame);
-      if (!document.hidden && !reduced) frame = requestAnimationFrame(loop);
+      if (!document.hidden && !reduced) frame = requestAnimationFrame(draw);
     }
 
     resize();
-    sample(0);
-    contours();
-    if (!reduced) frame = requestAnimationFrame(loop);
-    const onResize = () => {
-      resize();
-      sample(performance.now() / 1000);
-      contours();
-    };
-    window.addEventListener("resize", onResize);
+    draw(performance.now());
+    if (!reduced) {
+      window.addEventListener("pointermove", onPointer, { passive: true });
+      window.addEventListener("pointerdown", onPointer, { passive: true });
+    }
+    window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
@@ -157,6 +159,7 @@ export default function Backdrop() {
   return (
     <>
       <canvas ref={canvasRef} className="backdrop" aria-hidden="true" />
+      <div className="glow" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
     </>
   );
