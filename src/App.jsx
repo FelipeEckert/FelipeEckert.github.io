@@ -145,9 +145,23 @@ function useMotion() {
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
 
+    // nav links glide to their section instead of jumping
+    const onAnchor = (event) => {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      const id = link.getAttribute("href");
+      const target = id === "#top" ? 0 : document.querySelector(id);
+      if (target === null) return;
+      event.preventDefault();
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header")) || 72;
+      lenis.scrollTo(target, { offset: id === "#top" ? 0 : -header + 1, duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
+      history.replaceState(null, "", id);
+    };
+    document.addEventListener("click", onAnchor);
+
     const ctx = gsap.context(() => {
       document.fonts.ready.then(() => {
-        const split = SplitText.create(".hero h1", { type: "lines", mask: "lines" });
+        const split = SplitText.create(".hero h1", { type: "lines", mask: "lines", linesClass: "split-line" });
         gsap.from(split.lines, { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.09, delay: 0.15 });
         gsap.from(".hero-kicker, .hero-sub, .hero-actions", {
           opacity: 0,
@@ -159,7 +173,7 @@ function useMotion() {
         });
 
         gsap.utils.toArray(".section > h2").forEach((heading) => {
-          const lines = SplitText.create(heading, { type: "lines", mask: "lines" }).lines;
+          const lines = SplitText.create(heading, { type: "lines", mask: "lines", linesClass: "split-line" }).lines;
           gsap.from(lines, {
             yPercent: 110,
             duration: 1,
@@ -248,6 +262,7 @@ function useMotion() {
     });
 
     return () => {
+      document.removeEventListener("click", onAnchor);
       ctx.revert();
       gsap.ticker.remove(tick);
       lenis.destroy();
