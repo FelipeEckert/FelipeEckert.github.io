@@ -6,6 +6,8 @@ import Lenis from "lenis";
 import { ArrowUpRight, BookOpen, Briefcase, Code2, Download, Mail } from "lucide-react";
 import Backdrop from "./Backdrop.jsx";
 import LiveFit from "./LiveFit.jsx";
+import simeaPhoto from "./assets/simea-2026.webp";
+import promptathonPhoto from "./assets/promptathon-2026.webp";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -57,6 +59,11 @@ const work = [
     result: "About 80% less analysis time, variability well under the standard's limit, and a paper at SIMEA 2026.",
     stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "Automated reports"],
     link: "https://doi.org/10.5151/2357-7592-PAP126",
+    photo: {
+      src: simeaPhoto,
+      alt: "Felipe at the SIMEA 2026 symposium backdrop in São Paulo",
+      caption: "Presenting the paper at SIMEA 2026, São Paulo",
+    },
   },
   {
     title: "R&D Automotive Intelligence Hub",
@@ -65,6 +72,11 @@ const work = [
     did: "Built with R&D colleagues a Microsoft 365 Copilot solution that consolidates information from multiple sources into structured executive reports.",
     result: "Won first place among the internal teams.",
     stack: ["Microsoft 365 Copilot", "Generative AI", "Executive reporting"],
+    photo: {
+      src: promptathonPhoto,
+      alt: "First-place Prompt-a-thon trophy and medal on a table",
+      caption: "First-place trophy, Prompt-a-thon 2026",
+    },
   },
   {
     title: "F1 lap time prediction",
@@ -431,6 +443,12 @@ function Work() {
                 )}
               </h3>
               <p className="work-context">{item.context}</p>
+              {item.photo ? (
+                <figure className="work-photo">
+                  <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width="720" height="900" />
+                  <figcaption>{item.photo.caption}</figcaption>
+                </figure>
+              ) : null}
             </header>
             <dl>
               <div>
