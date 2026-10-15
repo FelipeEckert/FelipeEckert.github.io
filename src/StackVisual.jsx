@@ -129,7 +129,7 @@ const LAYERS = [
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t) => t * t * (3 - 2 * t);
 
-export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
+export default function StackVisual({ progressRef, enterRef, steps = 4, onFrame }) {
   const layerRefs = useRef([]);
   const contentRefs = useRef([]);
   const calloutRefs = useRef([]);
@@ -145,8 +145,8 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
     function render() {
       const targetP = reduced ? steps - 0.5 : progressRef.current ?? 0;
       const targetE = reduced ? 1 : Math.max(enterRef.current ?? 0, clamp((progressRef.current ?? 0) / 0.4));
-      shownP += (targetP - shownP) * 0.09;
-      shownE += (targetE - shownE) * 0.09;
+      shownP += (targetP - shownP) * 0.075;
+      shownE += (targetE - shownE) * 0.075;
 
       const explode = smooth(clamp(shownE));
       const gap = 30 + explode * 92;
@@ -154,9 +154,14 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
       const base = 470;
       let lifted = 0;
 
-      for (let i = 0; i < LAYERS.length; i += 1) {
-        const weight = smooth(clamp(1 - Math.abs(shownP - (i + 0.5)) * 1.15));
-        const y = base - i * gap - lifted - weight * 16;
+      // Step 0 (Collect) sits at the top of the stack and the story moves down,
+      // in the same direction as the text list. Levels count from the bottom.
+      const weights = [];
+      for (let level = 0; level < LAYERS.length; level += 1) {
+        const i = LAYERS.length - 1 - level;
+        const weight = smooth(clamp(1 - Math.abs(shownP - (i + 0.5)) * 0.95));
+        weights[i] = weight;
+        const y = base - level * gap - lifted - weight * 16;
         lifted += open * weight;
         const layer = layerRefs.current[i];
         if (layer) {
@@ -168,6 +173,7 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
         const callout = calloutRefs.current[i];
         if (callout) callout.style.opacity = clamp((weight - 0.35) / 0.5).toFixed(3);
       }
+      if (onFrame) onFrame(weights);
 
       if (!reduced) frame = requestAnimationFrame(render);
     }
@@ -175,7 +181,7 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
     render();
     if (!reduced) frame = requestAnimationFrame(render);
     return () => cancelAnimationFrame(frame);
-  }, [progressRef, enterRef, steps]);
+  }, [progressRef, enterRef, steps, onFrame]);
 
   return (
     <svg
@@ -184,7 +190,7 @@ export default function StackVisual({ progressRef, enterRef, steps = 4 }) {
       role="img"
       aria-label="Layers of a data analysis workflow: raw data, validation, analysis and report"
     >
-      {LAYERS.map(({ key, Comp, callouts }, index) => (
+      {LAYERS.map((layer, index) => ({ ...layer, index })).reverse().map(({ key, Comp, callouts, index }) => (
         <g key={key} className="stack-layer" ref={(el) => (layerRefs.current[index] = el)}>
           <Comp contentRef={(el) => (contentRefs.current[index] = el)} />
           <g className="callouts" ref={(el) => (calloutRefs.current[index] = el)} style={{ opacity: 0 }}>

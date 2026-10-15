@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -324,6 +324,13 @@ function Workflow() {
   const sectionRef = useRef(null);
   const [active, setActive] = useState(0);
   const enterRef = useRef(0);
+  const stepRefs = useRef([]);
+  const onFrame = useCallback((weights) => {
+    weights.forEach((w, i) => {
+      const el = stepRefs.current[i];
+      if (el) el.style.setProperty("--w", w.toFixed(3));
+    });
+  }, []);
   const [reduced] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   useEffect(() => {
@@ -339,7 +346,7 @@ function Workflow() {
       onUpdate: (self) => {
         const p = self.progress * workflow.length;
         progressRef.current = p;
-        setActive(Math.min(workflow.length - 1, Math.floor(p)));
+        setActive(Math.min(workflow.length - 1, Math.max(0, Math.round(p - 0.5))));
         sectionRef.current.style.setProperty("--story", self.progress.toFixed(4));
       },
     });
@@ -365,7 +372,11 @@ function Workflow() {
           <p className="story-note">The layers behind every analysis I ship, from the raw test file to the report on someone's desk.</p>
           <ol className="story-steps">
             {workflow.map((step, index) => (
-              <li key={step.title} className={index === active ? "is-active" : index < active ? "is-done" : ""}>
+              <li
+                key={step.title}
+                ref={(el) => (stepRefs.current[index] = el)}
+                className={index === active ? "is-active" : index < active ? "is-done" : ""}
+              >
                 <span className="step-index">{index + 1}</span>
                 <div>
                   <h3>{step.title}</h3>
@@ -379,7 +390,7 @@ function Workflow() {
           </div>
         </div>
         <div className="story-visual">
-          <StackVisual progressRef={progressRef} enterRef={enterRef} steps={workflow.length} />
+          <StackVisual progressRef={progressRef} enterRef={enterRef} steps={workflow.length} onFrame={onFrame} />
         </div>
       </div>
     </section>

@@ -76,7 +76,7 @@ ol, ul { padding: 0; list-style: none; }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
-.brand { font-family: var(--serif); font-size: 30px; letter-spacing: 0.005em; text-decoration: none; line-height: 1; }
+.brand { font-family: var(--serif); font-size: 30px; letter-spacing: 0.005em; text-decoration: none; line-height: 1; white-space: nowrap; }
 .site-header nav { display: flex; gap: 28px; }
 .site-header nav a { color: var(--stone); text-decoration: none; font-size: 15px; transition: color 0.3s var(--ease); }
 .site-header nav a:hover { color: var(--cream); }
@@ -173,7 +173,7 @@ ol, ul { padding: 0; list-style: none; }
 }
 
 /* story: pinned, scroll-driven walkthrough of one dataset */
-.story { position: relative; height: 420vh; margin-top: clamp(80px, 12vh, 140px); border-top: 1px solid var(--line); }
+.story { position: relative; height: 270vh; margin-top: clamp(80px, 12vh, 140px); border-top: 1px solid var(--line); }
 .story-sticky {
   position: sticky;
   top: var(--header);
@@ -188,27 +188,17 @@ ol, ul { padding: 0; list-style: none; }
 .story-note { margin-top: 12px; color: var(--stone); font-size: 15px; }
 .story-steps { display: grid; gap: 6px; margin-top: 32px; }
 .story-steps li {
+  --w: 0;
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
   gap: 12px;
-  padding: 12px 0;
-  opacity: 0.38;
-  transition: opacity 0.6s var(--ease);
+  padding: 10px 0;
+  opacity: calc(0.32 + 0.68 * var(--w));
+  transform: translateX(calc(6px * var(--w)));
 }
-.story-steps li.is-done { opacity: 0.6; }
-.story-steps li.is-active { opacity: 1; }
 .story-steps h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.1; }
-.story-steps p {
-  max-width: 50ch;
-  color: #c9c3b9;
-  font-size: 15.5px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.7s var(--ease), margin 0.7s var(--ease);
-}
-.story-steps li.is-active p { max-height: 9em; margin-top: 8px; }
-.step-index { font-family: var(--mono); font-size: 14px; color: var(--stone); padding-top: 7px; transition: color 0.6s var(--ease); }
-.story-steps li.is-active .step-index { color: var(--signal); }
+.story-steps p { margin-top: 6px; max-width: 50ch; color: #c9c3b9; font-size: 15px; line-height: 1.5; }
+.story-steps .step-index { color: color-mix(in srgb, var(--signal) calc(var(--w) * 100%), var(--stone)); }
 .story-progress { margin-top: 24px; height: 2px; background: var(--line); max-width: 360px; }
 .story-progress span { display: block; height: 100%; background: var(--signal); transform-origin: left; transform: scaleX(var(--story, 0)); }
 .story-visual { position: relative; height: min(520px, 70svh); border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -216,8 +206,7 @@ ol, ul { padding: 0; list-style: none; }
 .story-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .story.is-static { height: auto; }
 .story.is-static .story-sticky { position: static; height: auto; padding-block: 64px; }
-.story.is-static .story-steps li { opacity: 1; }
-.story.is-static .story-steps p { max-height: none; margin-top: 8px; }
+.story.is-static .story-steps li { opacity: 1; transform: none; }
 
 /* work */
 .work-list { border-top: 1px solid var(--line); }
@@ -310,11 +299,11 @@ ol, ul { padding: 0; list-style: none; }
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; min-height: auto; }
   .livefit { height: 340px; }
-  .story { height: 460vh; }
+  .story { height: 320vh; }
   .story-sticky { grid-template-columns: 1fr; align-content: start; gap: 16px; padding-top: 20px; }
   .story-visual { order: -1; height: 38svh; border-left: 0; }
   .story-steps { margin-top: 12px; }
-  .story-steps li { padding: 6px 0; }
+  .story-steps li { padding: 6px 0; opacity: 1; transform: none; }
   .story-steps li:not(.is-active) { display: none; }
   .story.is-static .story-steps li { display: grid; }
   .story-note { display: none; }
@@ -329,7 +318,9 @@ ol, ul { padding: 0; list-style: none; }
   :root { --header: 62px; }
   .brand { font-size: 25px; }
   body { font-size: 16px; }
-  .site-header nav { gap: 18px; }
+  .site-header nav { gap: 14px; }
+  .site-header nav a { font-size: 14px; }
+  .site-header nav a[href="#about"] { display: none; }
   .results { grid-template-columns: 1fr; }
   .result, .result + .result { padding-left: 0; border-left: 0; }
   .result + .result { border-top: 1px solid var(--line); }
