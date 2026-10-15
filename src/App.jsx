@@ -8,6 +8,9 @@ import Backdrop from "./Backdrop.jsx";
 import LiveFit from "./LiveFit.jsx";
 import simeaPhoto from "./assets/simea-2026.webp";
 import promptathonPhoto from "./assets/promptathon-2026.webp";
+import bajaJump from "./assets/baja-jump.webp";
+import bajaLogger from "./assets/baja-logger.webp";
+import bajaCockpit from "./assets/baja-cockpit.webp";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -94,6 +97,15 @@ const work = [
     did: "Co-developed a custom data logger with the electronics team and expanded its sensor channels.",
     result: "Telemetry became the basis for vehicle setup decisions across competition events.",
     stack: ["Data acquisition", "Telemetry", "Sensors"],
+    photo: {
+      src: bajaJump,
+      alt: "The Poli-USP BAJA car in the air over a jump on a dirt track",
+      caption: "On track with the Poli-USP BAJA car, the logger board, and me in the cockpit",
+      thumbs: [
+        { src: bajaLogger, alt: "The custom data logger: an STM32 Nucleo board with sensors in a white enclosure" },
+        { src: bajaCockpit, alt: "Felipe strapped into the BAJA car cockpit between runs" },
+      ],
+    },
     link: "https://www.researchgate.net/publication/411876977_Escola_Politecnica_da_Universidade_de_Sao_Paulo_Sistema_de_aquisicao_de_dados_para_prototipos_off_-road",
   },
 ];
@@ -446,6 +458,13 @@ function Work() {
               {item.photo ? (
                 <figure className="work-photo">
                   <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width="720" height="900" />
+                  {item.photo.thumbs ? (
+                    <div className="work-thumbs">
+                      {item.photo.thumbs.map((thumb) => (
+                        <img key={thumb.alt} src={thumb.src} alt={thumb.alt} loading="lazy" decoding="async" width="480" height="480" />
+                      ))}
+                    </div>
+                  ) : null}
                   <figcaption>{item.photo.caption}</figcaption>
                 </figure>
               ) : null}

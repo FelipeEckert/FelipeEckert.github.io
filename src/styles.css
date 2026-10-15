@@ -259,6 +259,8 @@ ol, ul { padding: 0; list-style: none; }
   filter: grayscale(0.55) brightness(0.82) contrast(1.05);
   transition: filter 0.8s var(--ease), transform 0.8s var(--ease);
 }
+.work-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.work-photo .work-thumbs img { aspect-ratio: 1; }
 .work-item:hover .work-photo img { filter: none; transform: scale(1.01); }
 .work-photo figcaption { margin-top: 10px; font-family: var(--mono); font-size: 12.5px; color: var(--stone); }
 
