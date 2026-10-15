@@ -217,7 +217,6 @@ ol, ul { padding: 0; list-style: none; }
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
-  grid-template-rows: auto 1fr;
   align-items: start;
   gap: 16px 48px;
   padding: 44px 0;
@@ -233,7 +232,7 @@ ol, ul { padding: 0; list-style: none; }
   transform-origin: left;
   transform: scaleX(var(--rule));
 }
-.work-item header { grid-row: span 2; }
+.work-item header { grid-row: span 3; }
 .work-item h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 3vw, 40px); line-height: 1.08; }
 .work-item h3 a { text-decoration: none; transition: color 0.4s var(--ease); }
 .work-item h3 a svg { display: inline; vertical-align: baseline; margin-left: 6px; transition: transform 0.5s var(--ease); }
@@ -247,11 +246,12 @@ ol, ul { padding: 0; list-style: none; }
 .stack { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; align-self: start; gap: 8px; grid-column: 2; }
 .stack li { font-family: var(--mono); font-size: 13px; color: #ddd7cc; padding: 5px 12px; background: rgba(242, 237, 228, 0.05); border: 1px solid #3d3a36; border-radius: 999px; }
 
-.work-photo { margin: 28px 0 0; max-width: 300px; }
+/* photos sit in a strip under the text, so the text sets the section height */
+.work-photo { grid-column: 2; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
 .work-photo img {
   display: block;
-  width: 100%;
-  height: auto;
+  height: 210px;
+  width: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 4px;
@@ -259,10 +259,11 @@ ol, ul { padding: 0; list-style: none; }
   filter: grayscale(0.55) brightness(0.82) contrast(1.05);
   transition: filter 0.8s var(--ease), transform 0.8s var(--ease);
 }
-.work-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.work-thumbs { display: contents; }
 .work-photo .work-thumbs img { aspect-ratio: 1; }
-.work-item:hover .work-photo img { filter: none; transform: scale(1.01); }
-.work-photo figcaption { margin-top: 10px; font-family: var(--mono); font-size: 12.5px; color: var(--stone); }
+.work-item:hover .work-photo img { filter: none; }
+.work-photo img:hover { transform: scale(1.02); }
+.work-photo figcaption { flex-basis: 100%; margin-top: 2px; font-family: var(--mono); font-size: 12.5px; color: var(--stone); }
 
 /* about */
 .about-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(40px, 6vw, 96px); }
@@ -333,7 +334,8 @@ ol, ul { padding: 0; list-style: none; }
   .result:nth-child(n + 3) { border-top: 1px solid var(--line); }
   .work-item, .about-grid { grid-template-columns: 1fr; }
   .work-item header { grid-row: auto; }
-  .work-photo { max-width: 220px; }
+  .work-photo { grid-column: 1; }
+  .work-photo img { height: 116px; }
   .stack { grid-column: 1; }
 }
 @media (max-width: 560px) {

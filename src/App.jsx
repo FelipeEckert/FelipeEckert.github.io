@@ -455,19 +455,6 @@ function Work() {
                 )}
               </h3>
               <p className="work-context">{item.context}</p>
-              {item.photo ? (
-                <figure className="work-photo">
-                  <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width="720" height="900" />
-                  {item.photo.thumbs ? (
-                    <div className="work-thumbs">
-                      {item.photo.thumbs.map((thumb) => (
-                        <img key={thumb.alt} src={thumb.src} alt={thumb.alt} loading="lazy" decoding="async" width="480" height="480" />
-                      ))}
-                    </div>
-                  ) : null}
-                  <figcaption>{item.photo.caption}</figcaption>
-                </figure>
-              ) : null}
             </header>
             <dl>
               <div>
@@ -488,6 +475,19 @@ function Work() {
                 <li key={tool}>{tool}</li>
               ))}
             </ul>
+            {item.photo ? (
+              <figure className="work-photo">
+                <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width="720" height="900" />
+                {item.photo.thumbs ? (
+                  <div className="work-thumbs">
+                    {item.photo.thumbs.map((thumb) => (
+                      <img key={thumb.alt} src={thumb.src} alt={thumb.alt} loading="lazy" decoding="async" width="480" height="480" />
+                    ))}
+                  </div>
+                ) : null}
+                <figcaption>{item.photo.caption}</figcaption>
+              </figure>
+            ) : null}
           </article>
         ))}
       </div>
