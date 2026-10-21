@@ -317,7 +317,7 @@ function Hero() {
         <p className="hero-kicker">
           {profile.role} in {profile.location}
         </p>
-        <h1 id="hero-title">I turn raw engineering data into reports people act on.</h1>
+        <h1 id="hero-title">I build software that turns raw data into decisions.</h1>
         <p className="hero-sub">
           At Hyundai Motor Brasil's R&D team I build the software around vehicle test data: Python apps that validate
           it, automate the analysis, and deliver dashboards and reports. Open to hybrid and remote software and data roles.

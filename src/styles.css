@@ -99,7 +99,7 @@ ol, ul { padding: 0; list-style: none; }
   font-size: clamp(45px, min(6.4vw, 10.5vh), 101px);
   line-height: 1;
   letter-spacing: -0.015em;
-  max-width: 11ch;
+  max-width: 15ch;
 }
 .hero-sub { margin-top: 32px; max-width: 54ch; color: #c9c3b9; font-size: 18px; line-height: 1.65; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
