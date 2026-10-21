@@ -17,7 +17,7 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const profile = {
   name: "Felipe Arthur Eckert",
-  role: "Data analyst",
+  role: "Software and data developer",
   location: "Indaiatuba, São Paulo, Brazil",
   email: "felipeeckert10@gmail.com",
   linkedin: "https://www.linkedin.com/in/felipe-arthur-eckert-b745461a9",
@@ -132,9 +132,9 @@ const publications = [
 const skills = [
   { group: "Analysis", items: "Python, pandas, NumPy, statistics, data cleaning and validation" },
   { group: "Reporting", items: "Plotly, Matplotlib, Streamlit dashboards, automated PDF and Excel reports, executive presentations" },
-  { group: "Automation and ML", items: "Python workflow automation, scikit-learn, XGBoost, SHAP, Git, Microsoft 365 Copilot" },
+  { group: "Automation and AI", items: "Python workflow automation, Claude Code agentic workflows (sub-agents, custom skills and hooks), Microsoft 365 Copilot, scikit-learn, XGBoost, SHAP, Git and GitHub Actions" },
   { group: "Learning now", items: "SQL, Power BI, Databricks" },
-  { group: "Domain", items: "Vehicle test data, chassis dynamometer, coastdown, CAN bus, GPS data acquisition" },
+  { group: "Domain", items: "Software development for data products (Python back ends, React front ends), test and sensor data, time-series data, embedded data acquisition, automotive R&D" },
 ];
 
 const experience = [
@@ -319,8 +319,8 @@ function Hero() {
         </p>
         <h1 id="hero-title">I turn raw engineering data into reports people act on.</h1>
         <p className="hero-sub">
-          At Hyundai Motor Brasil's R&D team I validate vehicle test data, automate the analysis in Python, and deliver
-          the results as dashboards and reports. Open to hybrid and remote data analyst roles.
+          At Hyundai Motor Brasil's R&D team I build the software around vehicle test data: Python apps that validate
+          it, automate the analysis, and deliver dashboards and reports. Open to hybrid and remote software and data roles.
         </p>
         <div className="hero-actions">
           <a className="btn btn-primary" href="#work">
@@ -508,7 +508,7 @@ function About() {
           </p>
           <p>
             That background means I understand where the data comes from and what can go wrong with it. I'm now
-            focused on analytics roles, and building my SQL and BI skills on top of a strong Python base. I work
+            focused on software and data roles, and building my SQL and BI skills on top of a strong Python base. I work
             comfortably in English, Portuguese and Spanish.
           </p>
           <dl className="skills">
@@ -584,7 +584,7 @@ function Contact() {
   ];
   return (
     <section className="section contact" id="contact" aria-labelledby="contact-title">
-      <h2 id="contact-title">Looking for a data analyst who understands where the data comes from?</h2>
+      <h2 id="contact-title">Looking for someone who builds software around data and knows where it comes from?</h2>
       <p>I'm open to hybrid roles around Campinas and São Paulo, and to remote roles in Brazil or abroad.</p>
       <ul>
         {links.map(({ label, href, icon: Icon }) => (
