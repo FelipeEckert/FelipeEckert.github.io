@@ -171,10 +171,10 @@ const publications = [
 ];
 
 const skills = [
-  { group: "Analysis", items: "Python, pandas, NumPy, statistics, data cleaning and validation" },
+  { group: "Data", items: "Python, pandas, NumPy, SQL (PostgreSQL, SQLite), ETL pipelines, data cleaning and validation, statistics" },
   { group: "Reporting", items: "Plotly, Matplotlib, Streamlit dashboards, automated PDF and Excel reports, executive presentations" },
-  { group: "Automation and AI", items: "Python workflow automation, agentic AI workflows with Claude Code (sub-agents, custom skills and hooks), Microsoft 365 Copilot, scikit-learn, XGBoost, SHAP" },
-  { group: "Engineering practice", items: "Automated testing (pytest, Catch2), CI/CD with GitHub Actions, Git, small PRs and code review, C++ for real-time audio" },
+  { group: "Machine learning and AI", items: "scikit-learn, XGBoost, PyTorch, Optuna, SHAP, Python workflow automation, agentic AI workflows with Claude Code (sub-agents, custom skills and hooks), Microsoft 365 Copilot" },
+  { group: "Engineering practice", items: "Automated testing (pytest, Vitest, Playwright, Catch2), CI/CD with GitHub Actions, REST APIs, TypeScript and Next.js, Git, small PRs and code review, C++ for real-time audio" },
   { group: "Learning now", items: "SQL, Power BI, Databricks" },
   { group: "Domain", items: "Software development for data products (Python back ends, React front ends), test and sensor data, time-series data, embedded data acquisition, automotive R&D" },
 ];
