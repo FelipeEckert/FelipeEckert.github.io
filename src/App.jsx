@@ -33,7 +33,7 @@ const results = [
   { value: "~80%", from: 0, to: 80, prefix: "~", suffix: "%", label: "less time per road-load analysis after automating it in Python" },
   { value: "< 5%", from: 12, to: 5, prefix: "< ", suffix: "%", label: "result variability after automated validation, against a 10% limit in the standard" },
   { value: "1st", label: "place at the Hyundai Prompt-a-thon 2026, with an AI reporting hub" },
-  { value: "2026", from: 2018, to: 2026, label: "paper published at SIMEA, the Brazilian automotive engineering symposium" },
+  { value: "2026", from: 2018, to: 2026, label: "first paper published by Hyundai Motor Brasil's R&D center, at the SIMEA symposium" },
 ];
 
 const workflow = [
@@ -62,7 +62,7 @@ const work = [
     problem:
       "Vehicle coastdown tests produce large, messy datasets, and picking the valid runs used to take a lot of manual review.",
     did: "Designed it with the test engineers and built it end to end in Python and Streamlit: it ingests files from different acquisition systems, syncs them with weather-station data, validates every run against ABNT NBR 10312, automatically searches for the most consistent run pairs, and exports standardized Excel and PDF reports. Runs offline, because test tracks rarely have a connection.",
-    result: "About 80% less analysis time, variability well under the standard's limit, over 500 automated tests, and a paper at SIMEA 2026.",
+    result: "About 80% less analysis time, variability well under the standard's limit, and over 500 automated tests. The work became the first paper published by Hyundai Motor Brasil's R&D center, at SIMEA 2026.",
     stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "pytest", "Automated reports"],
     link: "https://doi.org/10.5151/2357-7592-PAP126",
     photo: {
@@ -173,9 +173,9 @@ const publications = [
 const skills = [
   { group: "Data", items: "Python, pandas, NumPy, SQL (PostgreSQL, SQLite), ETL pipelines, data cleaning and validation, statistics" },
   { group: "Reporting", items: "Plotly, Matplotlib, Streamlit dashboards, automated PDF and Excel reports, executive presentations" },
-  { group: "Machine learning and AI", items: "scikit-learn, XGBoost, PyTorch, Optuna, SHAP, Python workflow automation, agentic AI workflows with Claude Code (sub-agents, custom skills and hooks), Microsoft 365 Copilot" },
+  { group: "Machine learning and AI", items: "scikit-learn, XGBoost, PyTorch, Optuna, SHAP, Python workflow automation, AI-assisted development workflows (coding agents, custom skills and hooks), Microsoft 365 Copilot" },
   { group: "Engineering practice", items: "Automated testing (pytest, Vitest, Playwright, Catch2), CI/CD with GitHub Actions, REST APIs, TypeScript and Next.js, Git, small PRs and code review, C++ for real-time audio" },
-  { group: "Learning now", items: "SQL, Power BI, Databricks" },
+  { group: "Learning now", items: "Power BI, Databricks" },
   { group: "Domain", items: "Software development for data products (Python back ends, React front ends), test and sensor data, time-series data, embedded data acquisition, automotive R&D" },
 ];
 
@@ -190,7 +190,7 @@ const experience = [
     when: "2018 to 2024",
     title: "Powertrain director, previously coordinator",
     place: "Poli-USP BAJA SAE",
-    copy: "Led powertrain development, telemetry-based setup and supplier negotiations under competition deadlines.",
+    copy: "Coordinator from 2020 to 2022 and director from 2022 to 2024. Led powertrain development, telemetry-based setup and supplier negotiations under competition deadlines.",
   },
   {
     when: "2018 to 2025",
@@ -558,8 +558,8 @@ function About() {
           </p>
           <p>
             That background means I understand where the data comes from and what can go wrong with it. I'm now
-            focused on software and data roles, and building my SQL and BI skills on top of a strong Python base. I work
-            comfortably in English, Portuguese and Spanish.
+            focused on software and data roles, and I build my own projects end to end to go further, from a full-stack
+            web app to a machine learning study. I work comfortably in English, Portuguese and Spanish.
           </p>
           <dl className="skills">
             {skills.map((skill) => (
