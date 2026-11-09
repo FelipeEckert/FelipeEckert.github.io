@@ -13,6 +13,7 @@ import bajaLogger from "./assets/baja-logger.webp";
 import bajaCockpit from "./assets/baja-cockpit.webp";
 import finalePlugin from "./assets/finale-plugin.webp";
 import paperTrading from "./assets/paper-trading.webp";
+import efficiencyModels from "./assets/efficiency-models.webp";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -99,6 +100,22 @@ const work = [
       alt: "The Finale plugin window: a large amount knob, genre and character presets, and a loudness panel",
       caption: "The plugin interface: one knob, genre and character presets, loudness panel",
       wide: true,
+    },
+  },
+  {
+    title: "Vehicle energy efficiency estimator",
+    context: "Personal project, open source",
+    problem: "Can a model predict a car's label energy consumption from its spec sheet alone, and does deep learning beat classic models on a small dataset?",
+    did: "Cleaned Brazil's 2026 vehicle labeling data (844 versions in inconsistent formats) into 510 homologations, then compared linear regression, random forest, XGBoost and two PyTorch networks under grouped nested cross-validation with Optuna. Every model has monotonic constraints (more mass or drag never predicts lower consumption), predictions come with conformal uncertainty ranges, and a Streamlit app explains each estimate.",
+    result: "XGBoost won with 5.8% mean error on MJ/km. Follow-up experiments showed CatBoost and LightGBM tie with it, pointing to the limit of the data rather than the model.",
+    stack: ["Python", "XGBoost", "PyTorch", "Optuna", "scikit-learn", "Streamlit", "pytest"],
+    link: "https://github.com/FelipeEckert/fuel-efficiency-deeplearning",
+    photo: {
+      src: efficiencyModels,
+      alt: "Bar chart of out-of-sample error by powertrain for five models; XGBoost is lowest in most groups and plug-in hybrids are the hardest",
+      caption: "Out-of-sample error by powertrain for the five candidates",
+      wide: true,
+      ratio: "841 / 493",
     },
   },
   {
