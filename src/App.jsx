@@ -12,6 +12,7 @@ import bajaJump from "./assets/baja-jump.webp";
 import bajaLogger from "./assets/baja-logger.webp";
 import bajaCockpit from "./assets/baja-cockpit.webp";
 import finalePlugin from "./assets/finale-plugin.webp";
+import paperTrading from "./assets/paper-trading.webp";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -70,6 +71,22 @@ const work = [
     },
   },
   {
+    title: "Paper trading simulator",
+    context: "Personal project, live demo",
+    problem: "I wanted a full web product to own end to end: accounts, real money math, a public API and a production deploy.",
+    did: "Built a Next.js 16 and Postgres app where each account trades currencies and crypto with R$ 100,000 of virtual cash at live quotes. Orders run in database transactions with row locks, money is stored as integers, and a REST API with API keys, rate limits and idempotency lets a bot trade the same wallet. Includes a strategy backtester and a public leaderboard.",
+    result: "Live on Vercel with a one-click demo account, about 220 tests from unit to end-to-end, and CI with a real Postgres on every pull request.",
+    stack: ["Next.js", "TypeScript", "Postgres", "Drizzle", "REST API", "Vitest", "Playwright", "Vercel"],
+    link: "https://next-js-training-ten-gamma.vercel.app",
+    photo: {
+      src: paperTrading,
+      alt: "The paper trading app home page: headline, a wallet card at R$ 100,072 and a USD-BRL price card with a buy button",
+      caption: "Home page of the live app",
+      wide: true,
+      ratio: "16 / 9",
+    },
+  },
+  {
     title: "Finale, a one-knob mastering plugin",
     context: "Side project with a friend, open source",
     problem: "Mastering a track takes a full chain of tools and experience most bedroom producers don't have.",
@@ -96,15 +113,6 @@ const work = [
       alt: "First-place Prompt-a-thon trophy and medal on a table",
       caption: "First-place trophy, Prompt-a-thon 2026",
     },
-  },
-  {
-    title: "F1 lap time prediction",
-    context: "Personal project, in progress",
-    problem: "What actually drives race pace: the circuit, the tyres, or the fuel load?",
-    did: "Collected 4,032 clean laps from five 2023 Grands Prix, explored them with per-race normalization, and set up a leave-one-race-out comparison of linear regression, random forest and XGBoost with SHAP.",
-    result: "Showed that pooled correlations hide the race effect: lap number goes from −0.06 to −0.59 once each race is normalized.",
-    stack: ["Python", "FastF1", "pandas", "scikit-learn", "XGBoost", "SHAP"],
-    link: "https://github.com/FelipeEckert/f1-laptime-prediction",
   },
   {
     title: "Telemetry data logger",
@@ -494,7 +502,15 @@ function Work() {
             </ul>
             {item.photo ? (
               <figure className={item.photo.wide ? "work-photo is-wide" : "work-photo"}>
-                <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width={item.photo.wide ? 820 : 720} height={item.photo.wide ? 500 : 900} />
+                <img
+                  src={item.photo.src}
+                  alt={item.photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                  width={item.photo.wide ? 820 : 720}
+                  height={item.photo.wide ? 500 : 900}
+                  style={item.photo.ratio ? { aspectRatio: item.photo.ratio } : undefined}
+                />
                 {item.photo.thumbs ? (
                   <div className="work-thumbs">
                     {item.photo.thumbs.map((thumb) => (
