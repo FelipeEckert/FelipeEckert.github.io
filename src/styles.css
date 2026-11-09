@@ -261,6 +261,7 @@ ol, ul { padding: 0; list-style: none; }
 }
 .work-thumbs { display: contents; }
 .work-photo .work-thumbs img { aspect-ratio: 1; }
+.work-photo.is-wide img { aspect-ratio: 82 / 50; object-fit: contain; background: #f2ede4; }
 .work-item:hover .work-photo img { filter: none; }
 .work-photo img:hover { transform: scale(1.02); }
 .work-photo figcaption { flex-basis: 100%; margin-top: 2px; font-family: var(--mono); font-size: 12.5px; color: var(--stone); }
@@ -336,6 +337,7 @@ ol, ul { padding: 0; list-style: none; }
   .work-item header { grid-row: auto; }
   .work-photo { grid-column: 1; }
   .work-photo img { height: 116px; }
+  .work-photo.is-wide img { height: auto; width: 100%; }
   .stack { grid-column: 1; }
 }
 @media (max-width: 560px) {

@@ -11,6 +11,7 @@ import promptathonPhoto from "./assets/promptathon-2026.webp";
 import bajaJump from "./assets/baja-jump.webp";
 import bajaLogger from "./assets/baja-logger.webp";
 import bajaCockpit from "./assets/baja-cockpit.webp";
+import finalePlugin from "./assets/finale-plugin.webp";
 import StackVisual from "./StackVisual.jsx";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -58,14 +59,29 @@ const work = [
     context: "Hyundai Motor Brasil, industry work (code private)",
     problem:
       "Vehicle coastdown tests produce large, messy datasets, and picking the valid runs used to take a lot of manual review.",
-    did: "Built a Python and Streamlit application that imports files from different acquisition systems, syncs them with weather-station data, applies the ABNT NBR 10312 corrections, selects the most consistent run pairs, and generates standardized reports.",
-    result: "About 80% less analysis time, variability well under the standard's limit, and a paper at SIMEA 2026.",
-    stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "Automated reports"],
+    did: "Designed it with the test engineers and built it end to end in Python and Streamlit: it ingests files from different acquisition systems, syncs them with weather-station data, validates every run against ABNT NBR 10312, automatically searches for the most consistent run pairs, and exports standardized Excel and PDF reports. Runs offline, because test tracks rarely have a connection.",
+    result: "About 80% less analysis time, variability well under the standard's limit, over 500 automated tests, and a paper at SIMEA 2026.",
+    stack: ["Python", "pandas", "NumPy", "Streamlit", "SQLite", "pytest", "Automated reports"],
     link: "https://doi.org/10.5151/2357-7592-PAP126",
     photo: {
       src: simeaPhoto,
       alt: "Felipe at the SIMEA 2026 symposium backdrop in São Paulo",
       caption: "Presenting the paper at SIMEA 2026, São Paulo",
+    },
+  },
+  {
+    title: "Finale, a one-knob mastering plugin",
+    context: "Side project with a friend, open source",
+    problem: "Mastering a track takes a full chain of tools and experience most bedroom producers don't have.",
+    did: "Built most of a VST3 plugin in C++: the audio engine (tonal EQ, 3-band compression, oversampled saturation, true-peak limiter), BS.1770 loudness metering, and assistants that measure the track and adjust the master toward genre targets. Every feature lands as a small PR, with tests and CI, built Claude-first by two developers in parallel.",
+    result: "A working plugin with about 180 Catch2 tests, pluginval in CI, and the full chain at around 4% of one CPU core at 48 kHz.",
+    stack: ["C++20", "JUCE", "DSP", "Catch2", "GitHub Actions", "Claude Code"],
+    link: "https://github.com/Cremoland/finale",
+    photo: {
+      src: finalePlugin,
+      alt: "The Finale plugin window: a large amount knob, genre and character presets, and a loudness panel",
+      caption: "The plugin interface: one knob, genre and character presets, loudness panel",
+      wide: true,
     },
   },
   {
@@ -132,7 +148,8 @@ const publications = [
 const skills = [
   { group: "Analysis", items: "Python, pandas, NumPy, statistics, data cleaning and validation" },
   { group: "Reporting", items: "Plotly, Matplotlib, Streamlit dashboards, automated PDF and Excel reports, executive presentations" },
-  { group: "Automation and AI", items: "Python workflow automation, Claude Code agentic workflows (sub-agents, custom skills and hooks), Microsoft 365 Copilot, scikit-learn, XGBoost, SHAP, Git and GitHub Actions" },
+  { group: "Automation and AI", items: "Python workflow automation, agentic AI workflows with Claude Code (sub-agents, custom skills and hooks), Microsoft 365 Copilot, scikit-learn, XGBoost, SHAP" },
+  { group: "Engineering practice", items: "Automated testing (pytest, Catch2), CI/CD with GitHub Actions, Git, small PRs and code review, C++ for real-time audio" },
   { group: "Learning now", items: "SQL, Power BI, Databricks" },
   { group: "Domain", items: "Software development for data products (Python back ends, React front ends), test and sensor data, time-series data, embedded data acquisition, automotive R&D" },
 ];
@@ -142,7 +159,7 @@ const experience = [
     when: "2025 to now",
     title: "Junior R&D analyst, Energy Efficiency and Data Analytics",
     place: "Hyundai Motor Brasil",
-    copy: "Process and validate vehicle test data, automate analysis workflows in Python, and report results to engineering and management.",
+    copy: "Build and maintain the team's internal data software, process and validate vehicle test data, and report results to engineering and management.",
   },
   {
     when: "2018 to 2024",
@@ -476,8 +493,8 @@ function Work() {
               ))}
             </ul>
             {item.photo ? (
-              <figure className="work-photo">
-                <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width="720" height="900" />
+              <figure className={item.photo.wide ? "work-photo is-wide" : "work-photo"}>
+                <img src={item.photo.src} alt={item.photo.alt} loading="lazy" decoding="async" width={item.photo.wide ? 820 : 720} height={item.photo.wide ? 500 : 900} />
                 {item.photo.thumbs ? (
                   <div className="work-thumbs">
                     {item.photo.thumbs.map((thumb) => (
